@@ -1,0 +1,13 @@
+#pragma once
+#include "include.h"
+#include "OthelloState.h"
+#include "OhtelloAIRandom.h"
+
+//ÉIÉZÉçÇÃÉQÅ[ÉÄâ^âc
+extern int playerTurn;
+
+
+
+void Othello_Initialize();
+void Othello_Update();
+void Othello_Draw();
