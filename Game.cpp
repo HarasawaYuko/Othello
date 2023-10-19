@@ -8,7 +8,7 @@
 static const int TOP_MARGIN = 50;//上側マージン
 static const int SIDE_MARGIN = 150;//横マージン
 static const int SQUARE_SIZE = 62;//マスの大きさ
-static const int PLAYOUT_MAX = 100000;//プレイアウトの回数
+static const int PLAYOUT_MAX = 100;//プレイアウトの回数
 static const int THINK_TIME = 1;//AIの思考時間
 static const int UNDO_NUM = 3;//undoできる数
 
@@ -290,7 +290,7 @@ void Game::Finalize() {
 	//BGMを止める
 	StopSoundMem(m_gameSnd);
 	//ハンドルの解放
-	//deleteMem();
+	deleteMem();
 }
 
 /*

@@ -147,6 +147,7 @@
     <ClCompile Include="OthelloAIRandom.cpp" />
     <ClCompile Include="OthelloNode.cpp" />
     <ClCompile Include="OthelloState.cpp" />
+    <ClCompile Include="Result.cpp" />
     <ClCompile Include="SceneChanger.cpp" />
     <ClCompile Include="SceneMgr.cpp" />
     <ClCompile Include="Share.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="OthelloAIMcts.h" />
     <ClInclude Include="OthelloNode.h" />
     <ClInclude Include="OthelloState.h" />
+    <ClInclude Include="Result.h" />
     <ClInclude Include="SceneChanger.h" />
     <ClInclude Include="SceneMgr.h" />
     <ClInclude Include="Share.h" />
