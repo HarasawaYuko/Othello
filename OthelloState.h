@@ -5,13 +5,6 @@
 //オセロのゲーム本体に関するクラス
 
 
-enum piece {
-	BLACK = 0,
-	WHITE = 1,
-	UNPUT,
-	CANPUT
-};
-
 struct Coord {
 public:
 	int x;

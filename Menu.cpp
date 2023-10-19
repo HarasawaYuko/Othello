@@ -29,7 +29,7 @@ static const int CLOSE_HEIGHT = 45;
 
 //êF
 const unsigned int COLOR_BOARD = GetColor(0x10, 0xB5, 0x67);
-static const unsigned int COLOR_BLUE = GetColor(0, 30, 150);
+static const unsigned int COLOR_BLUE = GetColor(0, 10, 140);
 static const unsigned int COLOR_LBLUE = GetColor(101, 187, 233);
 static const unsigned int COLOR_CANPUT = GetColor(0xFF, 0x99, 0x33);
 static const unsigned int COLOR_SELECT = GetColor(0x00, 0x33, 0xCC);

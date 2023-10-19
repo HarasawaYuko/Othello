@@ -1,5 +1,4 @@
 #include "OthelloState.h"
-//Test
 
 /****\‘¢‘Ì“™‚Ì’è‹`*****/
 
@@ -96,10 +95,10 @@ OthelloState::OthelloState() {
 	}
 	board[3][3] = BLACK;
 	board[4][4] = BLACK;
-	board[3][4] = BLACK;
+	board[3][4] = WHITE;
 	board[4][3] = WHITE;
 
-	turn = BLACK;
+	turn = WHITE;
 
 	for (int i = 0; i < BOARD_SIZE; i++) {
 		for (int j = 0; j < BOARD_SIZE; j++) {

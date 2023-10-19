@@ -2,16 +2,41 @@
 #include "Share.h"
 
 /**定数**/
+//レベル表示
+static const int LEVEL_STR_LETTER_SIZE = 40;
+static       int LEVEL_STR_X;
+static const int LEVEL_STR_Y = 80;
+static const int LEVEL_LETTER_SIZE = 50;
+static       int LEVEL_X;
+static       int LEVEL_Y;
+//試合結果表示
+static const int RESULT_LETTER_SIZE = 90;
+static       int RESULT_X;
+static const int RESULT_Y = 150;
+static std::string RESULT_STR;
+static       int RESULT_COLOR;
+
+//個数表示
+static const int NUM_SIZE = 60;
+static       int NUM_X;
+static const int NUM_Y = 260;
+
+//ボタン
+static const int BUTTON_X = 250;
+static const int BUTTON_WIDTH = 300;
+static const int BUTTON_HEIGHT = 60;
 //次へボタン
-static const int NEXT_X = 100;
-static const int NEXT_Y = 100;
-static const int NEXT_WIDTH = 200;
-static const int NEXT_HEIGHT = 200;
+static const int NEXT_Y = 375;
 //もう一度ボタン
-static const int RETRY_X = 300;
-static const int RETRY_Y = 300;
-static const int RETRY_WIDTH = 200;
-static const int RETRY_HEIGHT = 200;
+static const int RETRY_Y = 460;
+//ボタンに表示する文字
+static const int BUTTON_LETTER_SIZE = 40;
+static       int NEXT_LETTER_X;
+static       int RETRY_LETTER_X;
+static const int BUTTON_LETTER_Y = (BUTTON_HEIGHT/2) - BUTTON_LETTER_SIZE/2;
+
+//色
+static const unsigned int COLOR_BLUE = GetColor(0 ,10 ,140);
 
 /**描画用変数**/
 static bool onNext;
@@ -24,22 +49,69 @@ static bool nowRetry;
 //コンストラクタ
 Result::Result(SceneChanger *changer) 
 	:BaseScene(changer)
-{}
+{
+}
 
 //デスストラクタ
 Result::~Result() {
 }
 
 void Result::Initialize() {
+	//BGMを再生
+	m_resultSnd = LoadSoundMem("sound/Othello/result.mp3");
+	ChangeVolumeSoundMem(130, m_resultSnd);
+	PlaySoundMem(m_resultSnd, DX_PLAYTYPE_LOOP, true);
+
 	//画像のロード
 	m_resultPic = LoadGraph("pic/Othello/result.png");
 	//音声のロード
-	m_resultSnd = LoadSoundMem("sound/Othello/result.mp3");
 	m_nextSnd = LoadSoundMem("sound/Othello/next.mp3");
 	m_retrySnd = LoadSoundMem("sound/Othello/start.mp3");
+	//音量設定
+	ChangeVolumeSoundMem(150, m_nextSnd);
+	ChangeVolumeSoundMem(150, m_retrySnd);
 
-	//BGMを再生
-	PlaySoundMem(m_resultSnd , DX_PLAYTYPE_LOOP , true);
+	//結果表示位置計算
+	switch (Share::playerStatus) {
+	case WIN:
+		RESULT_COLOR = GetColor(0xE8, 0x14, 0x14);
+		RESULT_STR = "WIN";
+		break;
+	case LOSE:
+		RESULT_COLOR = GetColor(0x34, 0x21, 0x87);
+		RESULT_STR = "LOSE";
+		break;
+	case DRAW:
+		RESULT_COLOR = GetColor(50, 50, 50);
+		RESULT_STR = "DRAW";
+		break;
+	case NONE:
+		RESULT_COLOR = GetColor(50, 50, 50);
+		RESULT_STR = "DRAW";
+		break;
+	}
+	SetFontSize(RESULT_LETTER_SIZE);
+	RESULT_X = WIN_SIZE_X / 2 - GetDrawStringWidth(RESULT_STR.c_str() , RESULT_STR.size())/2;
+
+	//レベル表示位置の計算
+	SetFontSize(LEVEL_STR_LETTER_SIZE);
+	int levelStrWidth = GetDrawStringWidth("LEVEL:", 6);
+	SetFontSize(LEVEL_LETTER_SIZE);
+	int levelWidth = GetDrawStringWidth(std::to_string(Share::level).c_str(), std::to_string(Share::level).size());
+	LEVEL_STR_X = WIN_SIZE_X / 2 - (levelStrWidth + levelWidth) / 2;
+	LEVEL_X = LEVEL_STR_X + levelStrWidth + 5;
+	LEVEL_Y = LEVEL_STR_Y - (LEVEL_LETTER_SIZE - LEVEL_STR_LETTER_SIZE) + 5;
+
+	//個数表示位置
+	SetFontSize(NUM_SIZE);
+	int blackWidth = GetDrawStringWidth(std::to_string(Share::blackNum).c_str(), std::to_string(Share::blackNum).size());
+	int whiteWidth = GetDrawStringWidth(std::to_string(Share::whiteNum).c_str(), std::to_string(Share::whiteNum).size());
+	NUM_X = WIN_SIZE_X / 2 - (blackWidth + whiteWidth + GetDrawStringWidth(" - ", 3)) / 2;
+
+	//ボタン位置の計算
+	SetFontSize(BUTTON_LETTER_SIZE);
+	NEXT_LETTER_X = (BUTTON_WIDTH / 2) - (GetDrawStringWidth("NEXT", 4) / 2);
+	RETRY_LETTER_X = (BUTTON_WIDTH / 2) - (GetDrawStringWidth("RETRY", 5) / 2);
 }
 
 void Result::Update() {
@@ -54,56 +126,77 @@ void Result::Update() {
 
 
 	//次へボタン
-	if (Share::isIn(NEXT_X , NEXT_Y , NEXT_WIDTH , NEXT_HEIGHT , mousePosX , mousePosY)) {
+	if (Share::isIn(BUTTON_X , NEXT_Y , BUTTON_WIDTH , BUTTON_HEIGHT , mousePosX , mousePosY)) {
 		onNext = true;
 		//クリックされたら
 		if (mouseInput & MOUSE_INPUT_LEFT) {
+			nowNext = true;
 			m_sceneChanger->ChangeScene(Scene_Menu);
 		}
 	}
 
 	//もう一度ボタン
-	if (Share::isIn(RETRY_X, RETRY_Y, RETRY_WIDTH, RETRY_HEIGHT, mousePosX, mousePosY)) {
+	if (Share::isIn(BUTTON_X, RETRY_Y, BUTTON_WIDTH, BUTTON_HEIGHT, mousePosX, mousePosY)) {
 		onRetry = true;
 		//クリックされたら
 		if (mouseInput & MOUSE_INPUT_LEFT) {
+			nowRetry = true;
 			m_sceneChanger->ChangeScene(Scene_Game);
 		}
 	}
 }
 
 void Result::Draw() {
+	int width; //文字列の幅保存用
+
 	//背景の表示
 	DrawExtendGraph(0 , 0 ,WIN_SIZE_X ,WIN_SIZE_Y , m_resultPic , false);
 
-	//結果の表示
+	//レベルの表示
+	SetFontSize(LEVEL_STR_LETTER_SIZE);
+	DrawString(LEVEL_STR_X ,LEVEL_STR_Y , "LEVEL:" ,GetColor(30 , 30 ,30));
+	SetFontSize(LEVEL_LETTER_SIZE);
+	DrawFormatString(LEVEL_X , LEVEL_Y , GetColor(30 , 30 ,30) ,"%d" , Share::level);
 
-	//もう一度ボタン
-	SetFontSize(35);
-	DrawBoxAA(RETRY_X , RETRY_Y , RETRY_X + RETRY_WIDTH , RETRY_Y +RETRY_HEIGHT , GetColor(190 ,190,190) ,true);
-	int width = GetDrawStringWidth("RETRY" ,5 );
-	int center_x = RETRY_X + RETRY_WIDTH / 2;
-	DrawString(center_x - width / 2, RETRY_Y + 5, "START", GetColor(230, 230, 230));
-	if (onRetry) {
-		DrawBoxAA(RETRY_X, RETRY_Y, RETRY_X + RETRY_WIDTH, RETRY_Y + RETRY_HEIGHT, GetColor(101, 187, 233), false, 5.0);
-	}
+	//結果の表示
+	SetFontSize(RESULT_LETTER_SIZE);
+	DrawString(RESULT_X, RESULT_Y, RESULT_STR.c_str(), RESULT_COLOR);
+
+	//個数表示
+	SetFontSize(NUM_SIZE);
+	DrawFormatString(NUM_X , NUM_Y , GetColor(30 ,30 , 30) , "%d - %d" ,Share::blackNum , Share::whiteNum);
+
+	/** ボタン **/
+	SetFontSize(BUTTON_LETTER_SIZE);
 
 	//次へボタン
-	SetFontSize(35);
-	DrawBoxAA(NEXT_X, NEXT_Y, NEXT_X + NEXT_WIDTH, NEXT_Y + NEXT_HEIGHT, GetColor(190, 190, 190), true);
-	width = GetDrawStringWidth("RETRY", 5);
-	center_x = NEXT_X + NEXT_WIDTH / 2;
-	DrawString(center_x - width / 2, NEXT_Y + 5, "START", GetColor(230, 230, 230));
+	DrawBoxAA(BUTTON_X, NEXT_Y, BUTTON_X + BUTTON_WIDTH, NEXT_Y + BUTTON_HEIGHT, COLOR_BLUE, true);
+	DrawString(BUTTON_X + NEXT_LETTER_X, NEXT_Y + BUTTON_LETTER_Y, "NEXT", GetColor(230, 230, 230));
 	if (onNext) {
-		DrawBoxAA(NEXT_X, NEXT_Y, NEXT_X + NEXT_WIDTH, NEXT_Y + NEXT_HEIGHT, GetColor(101, 187, 233), false, 5.0);
+		DrawBoxAA(BUTTON_X, NEXT_Y, BUTTON_X + BUTTON_WIDTH, NEXT_Y + BUTTON_HEIGHT, GetColor(101, 187, 233), false, 5.0);
+	}
+
+	//もう一度ボタン
+	DrawBoxAA(BUTTON_X, RETRY_Y, BUTTON_X + BUTTON_WIDTH, RETRY_Y + BUTTON_HEIGHT, COLOR_BLUE, true);
+	DrawString(BUTTON_X + RETRY_LETTER_X, RETRY_Y + BUTTON_LETTER_Y, "RETRY", GetColor(230, 230, 230));
+	if (onRetry) {
+		DrawBoxAA(BUTTON_X, RETRY_Y, BUTTON_X + BUTTON_WIDTH, RETRY_Y + BUTTON_HEIGHT, GetColor(101, 187, 233), false, 5.0);
 	}
 }
 
 void Result::Finalize() {
 	//ロード画面の表示
 	DrawExtendGraph(0, 0, WIN_SIZE_X + 5, WIN_SIZE_Y, Share::loadPic, true);
+	//音声
+	if (nowNext) {
+		PlaySoundMem(m_nextSnd, DX_PLAYTYPE_NORMAL, true);
+	}
+	else if (nowRetry) {
+		PlaySoundMem(m_retrySnd , DX_PLAYTYPE_NORMAL, true);
+	}
 	//BGMを止める
 	StopSoundMem(m_resultSnd);
+	//メモリの削除
 	deleteMem();
 }
 

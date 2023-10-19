@@ -302,16 +302,13 @@ void Game::Finalize() {
 	//BGMを止める
 	StopSoundMem(m_gameSnd);
 	//メニュー画面遷移ならSE
-	if (onStop) {
+	if (nowToMenu) {
 		PlaySoundMem(m_stopSnd , DX_PLAYTYPE_NORMAL, true);
 	}
 	//勝者の記録
-	if (Share::playerColor == BLACK) {
-
-	}
-	else {
-
-	}
+	Share::playerStatus = m_state.getWinningStatus(Share::playerColor);
+	Share::blackNum = m_state.getNum(BLACK);
+	Share::whiteNum = m_state.getNum(WHITE);
 	//ハンドルの解放
 	deleteMem();
 }
