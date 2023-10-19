@@ -75,9 +75,35 @@ void Result::Update() {
 void Result::Draw() {
 	//背景の表示
 	DrawExtendGraph(0 , 0 ,WIN_SIZE_X ,WIN_SIZE_Y , m_resultPic , false);
+
+	//結果の表示
+
+	//もう一度ボタン
+	SetFontSize(35);
+	DrawBoxAA(RETRY_X , RETRY_Y , RETRY_X + RETRY_WIDTH , RETRY_Y +RETRY_HEIGHT , GetColor(190 ,190,190) ,true);
+	int width = GetDrawStringWidth("RETRY" ,5 );
+	int center_x = RETRY_X + RETRY_WIDTH / 2;
+	DrawString(center_x - width / 2, RETRY_Y + 5, "START", GetColor(230, 230, 230));
+	if (onRetry) {
+		DrawBoxAA(RETRY_X, RETRY_Y, RETRY_X + RETRY_WIDTH, RETRY_Y + RETRY_HEIGHT, GetColor(101, 187, 233), false, 5.0);
+	}
+
+	//次へボタン
+	SetFontSize(35);
+	DrawBoxAA(NEXT_X, NEXT_Y, NEXT_X + NEXT_WIDTH, NEXT_Y + NEXT_HEIGHT, GetColor(190, 190, 190), true);
+	width = GetDrawStringWidth("RETRY", 5);
+	center_x = NEXT_X + NEXT_WIDTH / 2;
+	DrawString(center_x - width / 2, NEXT_Y + 5, "START", GetColor(230, 230, 230));
+	if (onNext) {
+		DrawBoxAA(NEXT_X, NEXT_Y, NEXT_X + NEXT_WIDTH, NEXT_Y + NEXT_HEIGHT, GetColor(101, 187, 233), false, 5.0);
+	}
 }
 
 void Result::Finalize() {
+	//ロード画面の表示
+	DrawExtendGraph(0, 0, WIN_SIZE_X + 5, WIN_SIZE_Y, Share::loadPic, true);
+	//BGMを止める
+	StopSoundMem(m_resultSnd);
 	deleteMem();
 }
 

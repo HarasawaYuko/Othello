@@ -1,6 +1,7 @@
 #include "SceneMgr.h"
 #include "Menu.h"
 #include "Game.h"
+#include "Result.h"
 
 SceneMgr::SceneMgr() {
 	m_scene = (BaseScene*)new Menu(this);
@@ -29,6 +30,8 @@ void SceneMgr::Update() {
 		case Scene_Game:
 			m_scene = (BaseScene*) new Game(this);
 			break;
+		case Scene_Result:
+			m_scene = (BaseScene*) new Result(this);
 		}
 		m_next_scene = Scene_None;
 		m_scene->Initialize();

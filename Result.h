@@ -11,8 +11,7 @@ private:
 	//画像ハンドル
 	int m_resultPic;
 	//音声ハンドル
-	int m_winSnd;
-	int m_loseSnd;
+	int m_resultSnd;
 	int m_nextSnd;
 	int m_retrySnd;
 
