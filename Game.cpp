@@ -287,10 +287,10 @@ void Game::Finalize() {
 	if (onStop) {
 		PlaySoundMem(m_stopSnd , DX_PLAYTYPE_NORMAL, true);
 	}
-	//BGM‚ðŽ~‚ß‚é
-	StopSoundMem(m_gameSnd);
 	//ƒnƒ“ƒhƒ‹‚Ì‰ð•ú
 	deleteMem();
+	//BGM‚ðŽ~‚ß‚é
+	StopSoundMem(m_gameSnd);
 }
 
 /*

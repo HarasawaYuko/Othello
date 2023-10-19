@@ -1,10 +1,9 @@
 #pragma once
 
 enum Scene{
-	Scene_Othello,
-	Scene_Maze,
 	Scene_Menu,
 	Scene_Game,
+	Scene_Result,
 	Scene_Fin,
 	Scene_None
 };
