@@ -1,5 +1,6 @@
 #pragma once
 #include "include.h"
+#include "Share.h"
 
 //オセロのゲーム本体に関するクラス
 
@@ -20,13 +21,6 @@ public:
 	bool check();
 };
 
-enum WinningStatus {
-	WIN,
-	DRAW,
-	LOSE,
-	NONE
-};
-
 
 static const int BOARD_SIZE = 8;
 
@@ -45,6 +39,7 @@ public:
 	void advance(Coord);
 	bool isDone() const;
 	WinningStatus getWinningStatus()const;
+	WinningStatus getWinningStatus(piece)const;
 	int getScore()const;
 	int getNum(int)const;
 	bool isCanPut(Coord, int) const;

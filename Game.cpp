@@ -11,6 +11,7 @@ static const int SQUARE_SIZE = 62;//マスの大きさ
 static const int PLAYOUT_MAX = 100;//プレイアウトの回数
 static const int THINK_TIME = 1;//AIの思考時間
 static const int UNDO_NUM = 3;//undoできる数
+static const int TO_RESULT_TIME = 10;
 
 //個数表示関係
 static const int BOX_WIDTH = 120;
@@ -52,7 +53,9 @@ static bool nowPass;
 static bool nowUndo;
 static bool nowStop;
 
-
+//画面遷移判定用
+static bool timer;
+static TimeKeeper timerToResult;
 
 Game::Game(SceneChanger *changer) 
 	:BaseScene(changer)
@@ -63,6 +66,8 @@ Game::~Game()
 
 void Game::Initialize() {
 	m_state = OthelloState();
+	timer = false;
+	
 
 	//画像のロード
 	m_blackPic = LoadGraph("pic/Othello/black.png");
@@ -141,6 +146,17 @@ void Game::Update() {
 				nowPass = true;
 			}
 			while (!tk_think.isTimeOver()) {}
+		}
+	}
+	//試合終了時
+	else {
+		//タイマーが起動していなければ
+		if (!timer) {
+			timerToResult = TimeKeeper(TO_RESULT_TIME);
+			timer = true;
+		}
+		if (timerToResult.isTimeOver()) {
+			m_sceneChanger->ChangeScene(Scene_Result);
 		}
 	}
 	if (Share::isIn(UNDO_X, UNDO_Y, UNDO_X + UNDO_WIDTH, UNDO_Y + UNDO_HEIGHT, mousePosX, mousePosY)) {
@@ -283,12 +299,19 @@ void Game::Draw() {
 void Game::Finalize() {
 	//ロード画面の表示
 	DrawExtendGraph(0, 0, WIN_SIZE_X + 5, WIN_SIZE_Y , Share::loadPic, true);
+	//BGMを止める
+	StopSoundMem(m_gameSnd);
 	//メニュー画面遷移ならSE
 	if (onStop) {
 		PlaySoundMem(m_stopSnd , DX_PLAYTYPE_NORMAL, true);
 	}
-	//BGMを止める
-	StopSoundMem(m_gameSnd);
+	//勝者の記録
+	if (Share::playerColor == BLACK) {
+
+	}
+	else {
+
+	}
 	//ハンドルの解放
 	deleteMem();
 }

@@ -1,5 +1,9 @@
 #include "TimeKeeper.h"
 
+TimeKeeper::TimeKeeper() {
+
+}
+
 TimeKeeper::TimeKeeper(const int time) 
 	:startTime(std::chrono::high_resolution_clock::now()),time_threshold(time)
 {}

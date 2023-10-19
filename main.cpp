@@ -9,10 +9,6 @@
 #define WIN_POS_X 0
 #define WIN_POS_Y 0
 
-namespace {
-    static int scene = Scene_Othello;
-}
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     // ウィンドウモードに設定
@@ -23,7 +19,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return -1;
     }
     //描画先を裏画面にする
-    SetWindowText("GAME APPLICATION");
+    SetWindowText("OTELLO");
     SetDrawScreen(DX_SCREEN_BACK);
     SetGraphMode(WIN_SIZE_X , WIN_SIZE_Y , 32);
     SetWindowInitPosition(WIN_POS_X , WIN_POS_Y);

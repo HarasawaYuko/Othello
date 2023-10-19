@@ -9,7 +9,12 @@ class Result :public BaseScene {
 private:
 	//ゲーム進行用変数
 	//画像ハンドル
+	int m_resultPic;
 	//音声ハンドル
+	int m_resultSnd;
+	int m_nextSnd;
+	int m_retrySnd;
+
 public:
 	//関数
 	void deleteMem();

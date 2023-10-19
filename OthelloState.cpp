@@ -95,7 +95,7 @@ OthelloState::OthelloState() {
 	}
 	board[3][3] = BLACK;
 	board[4][4] = BLACK;
-	board[3][4] = WHITE;
+	board[3][4] = BLACK;
 	board[4][3] = WHITE;
 
 	turn = BLACK;
@@ -220,6 +220,26 @@ bool OthelloState::isDone() const {
 
 WinningStatus OthelloState::getWinningStatus() const {
 	int enemy = turn ^ 1;
+	if (isDone()) {
+		if (getNum(turn) > getNum(enemy)) {
+			return WIN;
+		}
+		else if (getNum(turn) < getNum(enemy)) {
+			return LOSE;
+		}
+		else {
+			return DRAW;
+		}
+	}
+	else {
+		return NONE;
+	}
+}
+
+//オーバーロード 
+//指定されたプレイヤーの状況を返す
+WinningStatus OthelloState::getWinningStatus(piece color) const {
+	int enemy = color ^ 1;
 	if (isDone()) {
 		if (getNum(turn) > getNum(enemy)) {
 			return WIN;
