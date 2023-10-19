@@ -305,6 +305,13 @@ void Game::Finalize() {
 	if (onStop) {
 		PlaySoundMem(m_stopSnd , DX_PLAYTYPE_NORMAL, true);
 	}
+	//ŸÒ‚Ì‹L˜^
+	if (Share::playerColor == BLACK) {
+
+	}
+	else {
+
+	}
 	//ƒnƒ“ƒhƒ‹‚Ì‰ğ•ú
 	deleteMem();
 }

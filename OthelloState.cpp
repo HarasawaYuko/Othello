@@ -236,6 +236,26 @@ WinningStatus OthelloState::getWinningStatus() const {
 	}
 }
 
+//オーバーロード 
+//指定されたプレイヤーの状況を返す
+WinningStatus OthelloState::getWinningStatus(piece color) const {
+	int enemy = color ^ 1;
+	if (isDone()) {
+		if (getNum(turn) > getNum(enemy)) {
+			return WIN;
+		}
+		else if (getNum(turn) < getNum(enemy)) {
+			return LOSE;
+		}
+		else {
+			return DRAW;
+		}
+	}
+	else {
+		return NONE;
+	}
+}
+
 int OthelloState::getScore()const {
 	return 0;
 }

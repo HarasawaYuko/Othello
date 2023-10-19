@@ -1,7 +1,5 @@
 #pragma once
 
-//#define NDEBUG
-
 #include <vector>
 #include <cassert>
 #include <random>
@@ -13,6 +11,3 @@
 
 #define WIN_SIZE_X 800
 #define WIN_SIZE_Y 600
-
-void DrawCircleEdgeAA();
-void DrawCircleEdge();

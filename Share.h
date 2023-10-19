@@ -3,6 +3,13 @@
 
 //‹¤’Ê•Ï”‚ğŠÇ—‚·‚éstaticƒNƒ‰ƒX
 
+enum WinningStatus {
+	WIN,
+	DRAW,
+	LOSE,
+	NONE
+};
+
 class Share {
 private:
 	Share();
