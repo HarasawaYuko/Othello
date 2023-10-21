@@ -12,11 +12,17 @@ private:
 	int m_sideBarPic;
 	int m_closeButtonPic;
 	int m_closeFramePic;
+	int m_rightSwipePic;
+	int m_leftSwipePic;
+	int m_rightSwipeSelectPic;
+	int m_leftSwipeSelectPic;
+
 	//‰¹ºƒnƒ“ƒhƒ‹
 	int m_menuSnd;
 	int m_startSnd;
 	int m_radioSnd;
 	int m_sideSnd;
+	int m_swipeSnd;
 
 	//•`‰æ—p
 	int m_bar_select_x;
