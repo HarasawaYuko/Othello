@@ -2,24 +2,29 @@
 #include "Share.h"
 
 /**定数**/
+//AI表示
+static       int AI_X;
+static const int AI_Y = 70;
+static const int AI_LETTER_SIZE = 50;
+
 //レベル表示
-static const int LEVEL_STR_LETTER_SIZE = 40;
+static const int LEVEL_STR_LETTER_SIZE = 30;
 static       int LEVEL_STR_X;
-static const int LEVEL_STR_Y = 80;
-static const int LEVEL_LETTER_SIZE = 50;
+static const int LEVEL_STR_Y = 130;
+static const int LEVEL_LETTER_SIZE = 35;
 static       int LEVEL_X;
 static       int LEVEL_Y;
 //試合結果表示
 static const int RESULT_LETTER_SIZE = 90;
 static       int RESULT_X;
-static const int RESULT_Y = 150;
+static const int RESULT_Y = 180;
 static std::string RESULT_STR;
 static       int RESULT_COLOR;
 
 //個数表示
 static const int NUM_SIZE = 60;
 static       int NUM_X;
-static const int NUM_Y = 260;
+static const int NUM_Y = 290;
 
 //ボタン
 static const int BUTTON_X = 250;
@@ -71,6 +76,10 @@ void Result::Initialize() {
 	ChangeVolumeSoundMem(150, m_nextSnd);
 	ChangeVolumeSoundMem(150, m_retrySnd);
 
+	//AI表示位置
+	SetFontSize(AI_LETTER_SIZE);
+	AI_X = WIN_SIZE_X / 2 - GetDrawStringWidth(Share::AI[(int)Share::ai].c_str() , Share::AI[(int)Share::ai].size())/2;
+
 	//結果表示位置計算
 	switch (Share::playerStatus) {
 	case WIN:
@@ -100,7 +109,7 @@ void Result::Initialize() {
 	int levelWidth = GetDrawStringWidth(std::to_string(Share::level).c_str(), std::to_string(Share::level).size());
 	LEVEL_STR_X = WIN_SIZE_X / 2 - (levelStrWidth + levelWidth) / 2;
 	LEVEL_X = LEVEL_STR_X + levelStrWidth + 5;
-	LEVEL_Y = LEVEL_STR_Y - (LEVEL_LETTER_SIZE - LEVEL_STR_LETTER_SIZE) + 5;
+	LEVEL_Y = LEVEL_STR_Y - (LEVEL_LETTER_SIZE - LEVEL_STR_LETTER_SIZE) + 2;
 
 	//個数表示位置
 	SetFontSize(NUM_SIZE);
@@ -151,6 +160,10 @@ void Result::Draw() {
 
 	//背景の表示
 	DrawExtendGraph(0 , 0 ,WIN_SIZE_X ,WIN_SIZE_Y , m_resultPic , false);
+
+	//レベルの表示
+	SetFontSize(AI_LETTER_SIZE);
+	DrawString(AI_X, AI_Y, Share::AI[(int)Share::ai].c_str(), GetColor(30, 30, 30));
 
 	//レベルの表示
 	SetFontSize(LEVEL_STR_LETTER_SIZE);

@@ -13,7 +13,6 @@ static const int TURN_RADIO_SELECT_SIZE = 13;
 static const int TURN_RADIO_SPACE = 210;
 
 //Ai選択スワイプボタン関係
-static const std::string AI[] = {"MCTS" , "AlphaBeta"};
 static const int AI_LEVEL_MAX[] = { 10 , 7 };
 static       int AI_INDEX = 0;
 static const int AI_NUM = 2;
@@ -239,9 +238,9 @@ void Menu::Draw() {
 		DrawExtendGraph(AI_SWIPE_X + AI_SWIPE_SPACE, AI_SWIPE_Y, AI_SWIPE_X + AI_SWIPE_WIDTH + AI_SWIPE_SPACE, AI_SWIPE_Y + AI_SWIPE_HEIGHT, m_rightSwipePic, true);
 	}
 	SetFontSize(AI_STR_SIZE);
-	int width = GetDrawStringWidth(AI[AI_INDEX].c_str() , AI[AI_INDEX].size());
+	int width = GetDrawStringWidth(Share::AI[AI_INDEX].c_str() , Share::AI[AI_INDEX].size());
 	AI_STR_X = WIN_SIZE_X / 2 - width / 2;
-	DrawString(AI_STR_X , AI_STR_Y , AI[AI_INDEX].c_str() , GetColor(30 , 30 , 30));
+	DrawString(AI_STR_X , AI_STR_Y , Share::AI[AI_INDEX].c_str() , GetColor(30 , 30 , 30));
 
 	//難易度調整バー
 	DrawBoxAA(BAR_X, BAR_Y, BAR_X + BAR_LENGTH, BAR_Y + BAR_HEIGHT, GetColor(120, 120, 120), true);
