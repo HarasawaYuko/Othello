@@ -17,6 +17,11 @@ enum piece {
 	CANPUT
 };
 
+enum Ai{
+	AI_MCTS = 0,
+	AI_Alpha = 1
+};
+
 class Share {
 private:
 	Share();
@@ -28,6 +33,7 @@ public:
 	static int playerStatus;
 	static int blackNum;
 	static int whiteNum;
+	static Ai ai;
 	//プロトタイプ宣言
 	static bool isIn(const int, const int, const int, const int, const int, const int);
 	static void Share_Initialize();

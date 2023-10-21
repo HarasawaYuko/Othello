@@ -2,20 +2,38 @@
 #include "OthelloState.h"
 #include "Share.h"
 
-//ラジオボタン関係
+//マウス押下フレーム数
+static int mouseLeftFrame = 0;
+
+//ターン選択ラジオボタン関係
 static const int TURN_RADIO_Y = 250;
-static const int TURN_RADIO_X = 210;
+static const int TURN_RADIO_X = 220;
 static const int TURN_RADIO_SIZE = 20;
 static const int TURN_RADIO_SELECT_SIZE = 13;
 static const int TURN_RADIO_SPACE = 210;
+
+//Ai選択スワイプボタン関係
+static const std::string AI[] = {"MCTS" , "AlphaBeta"};
+static       int AI_INDEX = 0;
+static const int AI_NUM = 2;
+static const int AI_SWIPE_Y = 300;
+static const int AI_SWIPE_X = 200;
+static const int AI_SWIPE_WIDTH = 65;
+static const int AI_SWIPE_HEIGHT = 65;
+static const int AI_SWIPE_SPACE = 400 - AI_SWIPE_WIDTH;
+static const int AI_STR_SIZE = 40;
+static       int AI_STR_X;
+static const int AI_STR_Y = AI_SWIPE_Y + (AI_SWIPE_HEIGHT/2) - (AI_STR_SIZE/2);
+
 //開始ボタン関係
 static const int START_BUTTON_X = 320;
 static const int START_BUTTON_Y = 480;
 static const int START_BUTTON_WIDTH = 160;
 static const int START_BUTTON_HEIGHT = 50;
+
 //サイドバー関係
 static const int BAR_X = 180;
-static const int BAR_Y = 320;
+static const int BAR_Y = 400;
 static const int BAR_LENGTH = 350;
 static const int BAR_HEIGHT = 6;
 static const int BAR_SELECT_SIZE = 13;
@@ -41,11 +59,14 @@ static bool onRadioBlack;
 static bool onRadioWhite;
 static bool onSideBar;
 static bool onClose;
+static bool onSwipeRight;
+static bool onSwipeLeft;
 
 //音声判定用変数
 static bool nowStart;
 static bool nowRadio;
 static bool nowSide;
+static bool nowSwipe;
 
 Menu::Menu(SceneChanger *changer) 
 	:BaseScene(changer),
@@ -65,12 +86,18 @@ void Menu::Initialize() {
 	m_sideBarPic = LoadGraph("pic/Othello/SideBar.png");
 	m_closeButtonPic = LoadGraph("pic/Othello/fin.png");
 	m_closeFramePic = LoadGraph("pic/Othello/finFrame.png");
+	m_rightSwipePic = LoadGraph("pic/Othello/rightSwipe.png");
+	m_leftSwipePic = LoadGraph("pic/Othello/leftSwipe.png");
+	m_rightSwipeSelectPic = LoadGraph("pic/Othello/rightSwipeSelect.png");
+	m_leftSwipeSelectPic = LoadGraph("pic/Othello/leftSwipeSelect.png");
 
 	//音声のロード
 	m_menuSnd = LoadSoundMem("sound/Othello/menu.mp3");
 	m_startSnd = LoadSoundMem("sound/Othello/start.mp3");
 	m_radioSnd = LoadSoundMem("sound/Othello/radio.mp3");
 	m_sideSnd = LoadSoundMem("sound/Othello/side.mp3");
+	m_swipeSnd = LoadSoundMem("sound/Othello/swipe.mp3");
+
 	//音量設定
 	ChangeVolumeSoundMem(130, m_menuSnd);
 
@@ -79,42 +106,69 @@ void Menu::Initialize() {
 }
 
 void Menu::Update() {
-
 	//フラグのリセット
-	nowStart = false;
-	nowRadio = false;
-	nowSide = false;
 	onClose = false;
 	onRadioBlack = false;
 	onRadioWhite = false;
 	onStartButton = false;
 	onSideBar = false;
+	onSwipeLeft = false;
+	onSwipeRight = false;
+	nowStart = false;
+	nowRadio = false;
+	nowSide = false;
+	nowSwipe = false;
+
 	//マウス位置の取得
 	int mousePosX;
 	int mousePosY;
 	int mouseInput;
 	GetMousePoint(&mousePosX, &mousePosY);
 	mouseInput = GetMouseInput();
+	if (mouseInput & MOUSE_INPUT_LEFT) {
+		mouseLeftFrame++;
+	}
+	else {
+		mouseLeftFrame = 0;
+	}
 
-	//ラジオボタン
-	int radioBlackLeft = TURN_RADIO_X - TURN_RADIO_SIZE;
-	int radioBlackRight = TURN_RADIO_X + TURN_RADIO_SIZE;
-	int radioBlackTop = TURN_RADIO_Y - TURN_RADIO_SIZE;
-	int radioBlackUnder = TURN_RADIO_Y + TURN_RADIO_SIZE;
-	if (radioBlackLeft <= mousePosX && mousePosX <= radioBlackRight && radioBlackTop <= mousePosY && mousePosY <= radioBlackUnder) {
-		if (mouseInput & MOUSE_INPUT_LEFT) {
+	//手番選択用ラジオボタン
+	int radioFirstLeft = TURN_RADIO_X - TURN_RADIO_SIZE;
+	int radioFirstRight = TURN_RADIO_X + TURN_RADIO_SIZE;
+	int radioFirstTop = TURN_RADIO_Y - TURN_RADIO_SIZE;
+	int radioFirstUnder = TURN_RADIO_Y + TURN_RADIO_SIZE;
+	if (radioFirstLeft <= mousePosX && mousePosX <= radioFirstRight && radioFirstTop <= mousePosY && mousePosY <= radioFirstUnder) {
+		if (mouseLeftFrame == 1) {
 			Share::playerColor = BLACK;
 			nowRadio = true;
 		}
 		onRadioBlack = true;
 	}
-	if (radioBlackLeft + TURN_RADIO_SPACE <= mousePosX && mousePosX <= radioBlackRight + TURN_RADIO_SPACE && radioBlackTop <= mousePosY && mousePosY <= radioBlackUnder) {
-		if (mouseInput & MOUSE_INPUT_LEFT) {
+	if (radioFirstLeft + TURN_RADIO_SPACE <= mousePosX && mousePosX <= radioFirstRight + TURN_RADIO_SPACE && radioFirstTop <= mousePosY && mousePosY <= radioFirstUnder) {
+		if (mouseLeftFrame == 1) {
 			Share::playerColor = WHITE;
 			nowRadio = true;
 		}
 		onRadioWhite = true;
 	}
+
+	//AI選択用スワイプボタン
+	if (Share::isIn(AI_SWIPE_X , AI_SWIPE_Y , AI_SWIPE_WIDTH  , AI_SWIPE_HEIGHT , mousePosX , mousePosY)) {
+		onSwipeLeft = true;
+		if (mouseLeftFrame == 1) {
+			AI_INDEX--;
+			if (AI_INDEX < 0) AI_INDEX = AI_NUM - 1;
+			nowSwipe = true;
+		}
+	}
+	if (Share::isIn(AI_SWIPE_X + AI_SWIPE_SPACE, AI_SWIPE_Y, AI_SWIPE_WIDTH, AI_SWIPE_HEIGHT, mousePosX, mousePosY)) {
+		onSwipeRight = true;
+		if (mouseLeftFrame == 1) {
+			AI_INDEX = (AI_INDEX + 1) % AI_NUM;
+			nowSwipe = true;
+		}
+	}
+	
 
 	//サイドバー
 	if (BAR_X <= mousePosX && mousePosX <= BAR_X + BAR_LENGTH && BAR_Y - BAR_SELECT_SIZE <= mousePosY && mousePosY <= BAR_Y + BAR_SELECT_SIZE) {
@@ -132,18 +186,16 @@ void Menu::Update() {
 
 	//開始ボタン
 	if (START_BUTTON_X <= mousePosX && mousePosX <= START_BUTTON_X + START_BUTTON_WIDTH && START_BUTTON_Y <= mousePosY && mousePosY <= START_BUTTON_Y + START_BUTTON_HEIGHT) {
-		if (mouseInput & MOUSE_INPUT_LEFT) {
+		if (mouseLeftFrame == 1) {
 			m_sceneChanger->ChangeScene(Scene_Game);
 			nowStart = true;
 		}
 		onStartButton = true;
 	}
-	if (mouseInput & MOUSE_INPUT_RIGHT) {
-	}
 	//閉じるボタン
 	if (Share::isIn(CLOSE_X, CLOSE_Y, CLOSE_X + CLOSE_WIDTH, CLOSE_Y + CLOSE_HEIGHT, mousePosX, mousePosY)) {
 		onClose = true;
-		if (mouseInput & MOUSE_INPUT_LEFT) {
+		if (mouseLeftFrame == 1) {
 			m_sceneChanger->ChangeScene(Scene_Fin);
 		}
 	}
@@ -172,6 +224,24 @@ void Menu::Draw() {
 		DrawCircleAA(TURN_RADIO_X + TURN_RADIO_SPACE, TURN_RADIO_Y, TURN_RADIO_SIZE, 20, GetColor(101, 187, 233), false, 5);
 	}
 
+	//AI選択表示
+	if (onSwipeLeft) {
+		DrawExtendGraph(AI_SWIPE_X, AI_SWIPE_Y, AI_SWIPE_X + AI_SWIPE_WIDTH, AI_SWIPE_Y + AI_SWIPE_HEIGHT, m_leftSwipeSelectPic, true);
+	}
+	else {
+		DrawExtendGraph(AI_SWIPE_X, AI_SWIPE_Y, AI_SWIPE_X + AI_SWIPE_WIDTH, AI_SWIPE_Y + AI_SWIPE_HEIGHT, m_leftSwipePic, true);
+	}
+	if (onSwipeRight) {
+		DrawExtendGraph(AI_SWIPE_X + AI_SWIPE_SPACE, AI_SWIPE_Y, AI_SWIPE_X + AI_SWIPE_WIDTH + AI_SWIPE_SPACE , AI_SWIPE_Y + AI_SWIPE_HEIGHT, m_rightSwipeSelectPic, true);
+	}
+	else {
+		DrawExtendGraph(AI_SWIPE_X + AI_SWIPE_SPACE, AI_SWIPE_Y, AI_SWIPE_X + AI_SWIPE_WIDTH + AI_SWIPE_SPACE, AI_SWIPE_Y + AI_SWIPE_HEIGHT, m_rightSwipePic, true);
+	}
+	SetFontSize(AI_STR_SIZE);
+	int width = GetDrawStringWidth(AI[AI_INDEX].c_str() , AI[AI_INDEX].size());
+	AI_STR_X = WIN_SIZE_X / 2 - width / 2;
+	DrawString(AI_STR_X , AI_STR_Y , AI[AI_INDEX].c_str() , GetColor(30 , 30 , 30));
+
 	//難易度調整バー
 	DrawBoxAA(BAR_X, BAR_Y, BAR_X + BAR_LENGTH, BAR_Y + BAR_HEIGHT, GetColor(120, 120, 120), true);
 	//選択箇所表示
@@ -179,6 +249,7 @@ void Menu::Draw() {
 	if (onSideBar) {
 		DrawCircle(m_bar_select_x, BAR_Y, BAR_SELECT_SIZE, GetColor(101, 187, 233), false, 3);
 	}
+	SetFontSize(35);
 	DrawFormatString(BAR_X + BAR_LENGTH + 95, BAR_Y - 20, GetColor(20, 20, 20), "%d", Share::level);
 	SetFontSize(20);
 	DrawFormatString(BAR_X + BAR_LENGTH + 20, BAR_Y - 8, GetColor(20, 20, 20), "LEVEL:");
@@ -186,7 +257,7 @@ void Menu::Draw() {
 	//開始ボタン
 	SetFontSize(35);
 	DrawBoxAA(START_BUTTON_X, START_BUTTON_Y, START_BUTTON_X + START_BUTTON_WIDTH, START_BUTTON_Y + START_BUTTON_HEIGHT, GetColor(10, 70, 150), true);
-	int width = GetDrawStringWidth("START", 5);
+	width = GetDrawStringWidth("START", 5);
 	int center_x = START_BUTTON_X + START_BUTTON_WIDTH / 2;
 	DrawString(center_x - width / 2, START_BUTTON_Y + 5, "START", GetColor(230, 230, 230));
 	if (onStartButton) {
@@ -206,6 +277,10 @@ void Menu::Draw() {
 	if (nowSide) {
 		PlaySoundMem(m_sideSnd, DX_PLAYTYPE_NORMAL, true);
 	}
+	if (nowSwipe) {
+		PlaySoundMem(m_swipeSnd, DX_PLAYTYPE_NORMAL, true);
+
+	}
 }
 
 void Menu::Finalize() {
@@ -219,6 +294,9 @@ void Menu::Finalize() {
 	StopSoundMem(m_menuSnd);
 	//ハンドルの解放
 	deleteMem();
+
+	//AIの設定
+	Share::ai = (Ai)AI_INDEX;
 }
 
 void Menu::deleteMem() {
@@ -226,8 +304,13 @@ void Menu::deleteMem() {
 	DeleteGraph(m_sideBarPic);
 	DeleteGraph(m_closeButtonPic);
 	DeleteGraph(m_closeFramePic);
+	DeleteGraph(m_rightSwipePic);
+	DeleteGraph(m_rightSwipeSelectPic);
+	DeleteGraph(m_leftSwipePic);
+	DeleteGraph(m_leftSwipeSelectPic);
 	DeleteSoundMem(m_menuSnd);
 	DeleteSoundMem(m_startSnd);
 	DeleteSoundMem(m_radioSnd);
 	DeleteSoundMem(m_sideSnd);
+	DeleteSoundMem(m_swipeSnd);
 }
