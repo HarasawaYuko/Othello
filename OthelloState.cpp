@@ -105,7 +105,7 @@ OthelloState::OthelloState() {
 	}
 	board[3][3] = BLACK;
 	board[4][4] = BLACK;
-	board[3][4] = WHITE;
+	board[3][4] = BLACK;
 	board[4][3] = WHITE;
 
 	turn = BLACK;
@@ -231,10 +231,10 @@ bool OthelloState::isDone() const {
 WinningStatus OthelloState::getWinningStatus() const {
 	int enemy = turn ^ 1;
 	if (isDone()) {
-		if (getNum(turn) > getNum(enemy)) {
+		if (getNum((piece)turn) > getNum((piece)enemy)) {
 			return WIN;
 		}
-		else if (getNum(turn) < getNum(enemy)) {
+		else if (getNum((piece)turn) < getNum((piece)enemy)) {
 			return LOSE;
 		}
 		else {
@@ -251,13 +251,16 @@ WinningStatus OthelloState::getWinningStatus() const {
 WinningStatus OthelloState::getWinningStatus(piece color) const {
 	int enemy = color ^ 1;
 	if (isDone()) {
-		if (getNum(turn) > getNum(enemy)) {
+		if (getNum((piece)color) > getNum((piece)enemy)) {
+			printfDx("WIN");
 			return WIN;
 		}
-		else if (getNum(turn) < getNum(enemy)) {
+		else if (getNum((piece)color) < getNum((piece)enemy)) {
+			printfDx("LOSE");
 			return LOSE;
 		}
 		else {
+			printfDx("DRAW");
 			return DRAW;
 		}
 	}
@@ -270,7 +273,7 @@ int OthelloState::getScore()const {
 	return 0;
 }
 
-int OthelloState::getNum(int turn) const {
+int OthelloState::getNum(piece turn) const {
 	int count = 0;
 	for (int i = 0; i < BOARD_SIZE; i++) {
 		for (int j = 0; j < BOARD_SIZE; j++) {

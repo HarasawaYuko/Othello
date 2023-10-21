@@ -34,7 +34,7 @@ public:
 	WinningStatus getWinningStatus()const;
 	WinningStatus getWinningStatus(piece)const;
 	int getScore()const;
-	int getNum(int)const;
+	int getNum(piece)const;
 	bool isCanPut(Coord, int) const;
 	int getPiece(Coord)const;
 	WinningStatus getBlackPlayerStatus() const;
