@@ -13,6 +13,18 @@ namespace {
 								{-1,-1} };
 }
 
+static const int BOARD_EVAL[8][8] =
+{
+	{40 , -1  , 10 , 5 , 5 , 10 ,  -1 , 40},
+	{-1 , -20 ,  1 , 1 , 1 ,  1 , -20 , -1},
+	{10 ,   1 ,  1 , 1 , 1 ,  1 ,   1 , 10},
+	{ 5 ,   1 ,  1 , 1 , 1 ,  1 ,   1 ,  5},
+	{ 5 ,   1 ,  1 , 1 , 1 ,  1 ,   1 ,  5},
+	{10 ,   1 ,  1 , 1 , 1 ,  1 ,   1 , 10},
+	{-1 , -20 ,  1 , 1 , 1 ,  1 , -20 , -1},
+	{40 , -1  , 10 , 5 , 5 , 10 ,  -1 , 40}
+};
+
 bool Coord::check() {
 	if (0 <= x && x < BOARD_SIZE && 0 <= y && y < BOARD_SIZE) {
 		return true;
@@ -98,7 +110,7 @@ OthelloState::OthelloState() {
 	board[3][4] = WHITE;
 	board[4][3] = WHITE;
 
-	turn = WHITE;
+	turn = BLACK;
 
 	for (int i = 0; i < BOARD_SIZE; i++) {
 		for (int j = 0; j < BOARD_SIZE; j++) {
@@ -320,4 +332,23 @@ WinningStatus OthelloState::getBlackPlayerStatus() const {
 	else {
 		return DRAW;
 	}
+}
+
+int OthelloState::getEvaluation()const {
+	int enemy = turn ^ 1;
+
+	int myScore = 0;
+	int enemyScore = 0;
+	for (int i = 0; i < BOARD_SIZE; i++) {
+		for (int j = 0; j < BOARD_SIZE; j++) {
+			if (board[i][j] == turn) {
+				myScore += BOARD_EVAL[i][j];
+			}
+			else if (board[i][j] == enemy) {
+				enemyScore += BOARD_EVAL[i][j];
+			}
+		}
+	}
+
+	return myScore - enemyScore;
 }

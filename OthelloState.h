@@ -44,4 +44,6 @@ public:
 	bool isCanPutAll(int) const;
 	void turnover(Coord);
 	void turnoverVec(Coord, int, int);
+
+	int getEvaluation() const;
 };

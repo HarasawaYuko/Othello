@@ -3,6 +3,7 @@
 #include "TimeKeeper.h"
 #include "OthelloAIMcts.h"
 #include "OhtelloAIRandom.h"
+#include "AialphaBeta.h"
 
 /***íËêî***/
 static const int TOP_MARGIN = 50;//è„ë§É}Å[ÉWÉì
@@ -136,7 +137,8 @@ void Game::Update() {
 		//AIÇÃéËî‘
 		else {
 			TimeKeeper tk_think = TimeKeeper(THINK_TIME);
-			Coord tmp = mctsActionOthello(m_state, m_playoutNum);
+			//Coord tmp = mctsActionOthello(m_state, m_playoutNum);
+			Coord tmp = alphaBetaAction(m_state, 6);
 			m_state.advance(tmp);
 			if (tmp.check()) {
 				m_currentPut = tmp;
