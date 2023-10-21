@@ -14,9 +14,10 @@ static const int TURN_RADIO_SPACE = 210;
 
 //Ai選択スワイプボタン関係
 static const std::string AI[] = {"MCTS" , "AlphaBeta"};
+static const int AI_LEVEL_MAX[] = { 10 , 7 };
 static       int AI_INDEX = 0;
 static const int AI_NUM = 2;
-static const int AI_SWIPE_Y = 300;
+static const int AI_SWIPE_Y = 310;
 static const int AI_SWIPE_X = 200;
 static const int AI_SWIPE_WIDTH = 65;
 static const int AI_SWIPE_HEIGHT = 65;
@@ -33,7 +34,7 @@ static const int START_BUTTON_HEIGHT = 50;
 
 //サイドバー関係
 static const int BAR_X = 180;
-static const int BAR_Y = 400;
+static const int BAR_Y = 420;
 static const int BAR_LENGTH = 350;
 static const int BAR_HEIGHT = 6;
 static const int BAR_SELECT_SIZE = 13;
@@ -171,15 +172,15 @@ void Menu::Update() {
 	
 
 	//サイドバー
+	//レベルの設定
+	m_level = Share::level;
+	Share::level = (m_bar_select_x - BAR_X) / (BAR_LENGTH / AI_LEVEL_MAX[AI_INDEX]) + 1;
 	if (BAR_X <= mousePosX && mousePosX <= BAR_X + BAR_LENGTH && BAR_Y - BAR_SELECT_SIZE <= mousePosY && mousePosY <= BAR_Y + BAR_SELECT_SIZE) {
 		onSideBar = true;
 		if (mouseInput & MOUSE_INPUT_LEFT) {
 			m_bar_select_x = mousePosX;
-			//レベルの設定
-			int nextLevel = (mousePosX - BAR_X) / ((BAR_LENGTH / 9) - 1) + 1;
-			if (Share::level != nextLevel) {
+			if (Share::level != m_level) {
 				nowSide = true;
-				Share::level = nextLevel;
 			}
 		}
 	}
