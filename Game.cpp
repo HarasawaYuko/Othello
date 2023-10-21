@@ -9,7 +9,7 @@
 static const int TOP_MARGIN = 50;//上側マージン
 static const int SIDE_MARGIN = 150;//横マージン
 static const int SQUARE_SIZE = 62;//マスの大きさ
-static const int PLAYOUT_MAX = 100;//プレイアウトの回数
+static const int PLAYOUT_MAX = 10000;//プレイアウトの回数
 static const int THINK_TIME = 1;//AIの思考時間
 static const int UNDO_NUM = 3;//undoできる数
 static const int TO_RESULT_TIME = 10;
@@ -69,6 +69,15 @@ void Game::Initialize() {
 	m_state = OthelloState();
 	timer = false;
 	
+	//AIを設定
+	switch (Share::ai) {
+	case AI_MCTS:
+		aiFunc = [](const OthelloState& state) {return mctsActionOthello(state, (PLAYOUT_MAX / 10) * Share::level); };
+		break;
+	case AI_Alpha:
+		aiFunc = [](const OthelloState& state) {return alphaBetaAction(state, Share::level); };
+		break;
+	}
 
 	//画像のロード
 	m_blackPic = LoadGraph("pic/Othello/black.png");
@@ -90,9 +99,6 @@ void Game::Initialize() {
 	
 	//音量設定
 	ChangeVolumeSoundMem(110, m_gameSnd);
-
-	//プレイアウト回数
-	m_playoutNum = (PLAYOUT_MAX / 10) * Share::level;
 
 	//BGMを再生
 	PlaySoundMem(m_gameSnd, DX_PLAYTYPE_LOOP, true);
@@ -138,7 +144,8 @@ void Game::Update() {
 		else {
 			TimeKeeper tk_think = TimeKeeper(THINK_TIME);
 			//Coord tmp = mctsActionOthello(m_state, m_playoutNum);
-			Coord tmp = alphaBetaAction(m_state, 6);
+			//Coord tmp = alphaBetaAction(m_state, 6);
+			Coord tmp = aiFunc(m_state);
 			m_state.advance(tmp);
 			if (tmp.check()) {
 				m_currentPut = tmp;

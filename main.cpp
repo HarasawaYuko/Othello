@@ -1,5 +1,4 @@
 #include "include.h"
-#include "SceneOthello.h"
 #include "SceneMgr.h"
 #include "Share.h"
 

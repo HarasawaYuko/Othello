@@ -1,10 +1,13 @@
 #pragma once
+#include <functional>
 
 #include "BaseScene.h"
 #include "SceneChanger.h"
 
 #include "OthelloState.h"
 #include "include.h"
+
+using AIFunction = std::function<Coord(const OthelloState &)>;
 
 class Game :public BaseScene {
 private:
@@ -13,6 +16,8 @@ private:
 	Coord m_selectCoord = Coord(0, 0);
 	Coord m_currentPut = Coord(-1, 0);
 	std::vector<std::pair<OthelloState, Coord>> undo_vec;
+	AIFunction aiFunc;
+
 	//‰æ‘œƒnƒ“ƒhƒ‹
 	int m_gamePic;
 	int m_blackPic;
