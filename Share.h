@@ -33,6 +33,7 @@ public:
 	static int playerStatus;
 	static int blackNum;
 	static int whiteNum;
+	static const std::string AI[2];
 	static Ai ai;
 	//プロトタイプ宣言
 	static bool isIn(const int, const int, const int, const int, const int, const int);
