@@ -9,7 +9,7 @@
 static const int TOP_MARGIN = 50;//上側マージン
 static const int SIDE_MARGIN = 150;//横マージン
 static const int SQUARE_SIZE = 62;//マスの大きさ
-static const int PLAYOUT_NUM_LEVEL = 1000;//1レベルごとのプレイアウト
+static const int PLAYOUT_NUM_LEVEL = 10000;//1レベルごとのプレイアウト
 static const int THINK_TIME = 1;//AIの思考時間
 static const int UNDO_NUM = 3;//undoできる数
 static const int TO_RESULT_TIME = 10;
@@ -66,16 +66,16 @@ Game::~Game()
 {}
 
 void Game::Initialize() {
-	m_state = OthelloState();
+	m_state = BitState();
 	timer = false;
 	
 	//AIを設定
 	switch (Share::ai) {
 	case AI_MCTS:
-		aiFunc = [](const OthelloState& state) {return mctsActionOthello(state, PLAYOUT_NUM_LEVEL * Share::level); };
+		aiFunc = [](const BitState& state) {return mctsActionOthello(state, PLAYOUT_NUM_LEVEL * Share::level); };
 		break;
 	case AI_Alpha:
-		aiFunc = [](const OthelloState& state) {return alphaBetaAction(state, Share::level); };
+		aiFunc = [](const BitState& state) {return alphaBetaAction(state, Share::level); };
 		break;
 	}
 
@@ -118,26 +118,33 @@ void Game::Update() {
 	int mouseInput;
 	GetMousePoint(&mousePosX, &mousePosY);
 	mouseInput = GetMouseInput();
-	MouseToCoord(mousePosX, mousePosY, &m_selectCoord);
+	setSelectSquare(mousePosX, mousePosY);
+	if (m_selectSquare == 0) {
+		onBoard = false;
+	}
+	else {
+		onBoard = true;
+	}
+	//MouseToCoord(mousePosX, mousePosY, &m_selectCoord);
 	if (!m_state.isDone()) {
 		//プレイヤーの手番
 		if (m_state.turn == Share::playerColor) {
 			//パス
-			if (!m_state.isCanPutAll(m_state.turn)) {
-				m_state.advance(Coord(-1, -1));
+			if (m_state.getLegalBoard() == 0) {
+				m_state.advance(0);
 				nowPass = true;
 			}
 			//置く
-			else if (mouseInput & MOUSE_INPUT_LEFT && m_state.isCanPut(m_selectCoord, m_state.turn)) {
+			else if (mouseInput & MOUSE_INPUT_LEFT && m_state.isCanPut(m_selectSquare)) {
 				//置く前に
-				undo_vec.push_back(std::make_pair(m_state, m_currentPut));
+				undo_vec.push_back(std::make_pair(m_state, m_recentPut));
 				if (undo_vec.size() > UNDO_NUM) {
 					//先頭から削除
 					undo_vec.erase(undo_vec.begin());
 				}
-				m_state.advance(m_selectCoord);
+				m_state.advance(m_selectSquare);
 				nowPut = true;
-				m_currentPut = m_selectCoord;
+				m_recentPut = m_selectSquare;
 			}
 		}
 		//AIの手番
@@ -145,10 +152,10 @@ void Game::Update() {
 			TimeKeeper tk_think = TimeKeeper(THINK_TIME);
 			//Coord tmp = mctsActionOthello(m_state, m_playoutNum);
 			//Coord tmp = alphaBetaAction(m_state, 6);
-			Coord tmp = aiFunc(m_state);
+			uint64_t tmp = aiFunc(m_state);
 			m_state.advance(tmp);
-			if (tmp.check()) {
-				m_currentPut = tmp;
+			if (tmp != 0) {
+				m_recentPut = tmp;
 				nowPut = true;
 			}
 			else {
@@ -168,11 +175,12 @@ void Game::Update() {
 			m_sceneChanger->ChangeScene(Scene_Result);
 		}
 	}
+
 	if (Share::isIn(UNDO_X, UNDO_Y, UNDO_X + UNDO_WIDTH, UNDO_Y + UNDO_HEIGHT, mousePosX, mousePosY)) {
 		onUndo = true;
 		if (mouseInput & MOUSE_INPUT_LEFT && undo_vec.size() > 0) {
 			m_state = undo_vec.back().first;
-			m_currentPut = undo_vec.back().second;
+			m_recentPut = undo_vec.back().second;
 			nowUndo = true;
 			undo_vec.erase(undo_vec.end() - 1);
 		}
@@ -183,8 +191,6 @@ void Game::Update() {
 		if (mouseInput & MOUSE_INPUT_LEFT) {
 			m_sceneChanger->ChangeScene(Scene_Menu);
 			nowToMenu = true;
-			m_currentPut.x = -1;
-			m_currentPut.y = -1;
 		}
 	}
 }
@@ -196,10 +202,11 @@ void Game::Draw() {
 	//ボード
 	int x_pos = SIDE_MARGIN;
 	int y_pos = TOP_MARGIN;
-	for (int i = 0; i < BOARD_SIZE; i++) {
+	for (int x = 0; x < BOARD_SIZE; x++) {
 		y_pos = TOP_MARGIN;
-		for (int j = 0; j < BOARD_SIZE; j++) {
-			switch (m_state.getPiece(Coord(i, j))) {
+		for (int y = 0; y < BOARD_SIZE; y++) {
+			int index = x + y * BOARD_SIZE;
+			switch (m_state.getPiece(HIGHEST >> index)) {
 			case CANPUT:
 				DrawBoxAA((float)(x_pos + 1), (float)(y_pos + 1), (float)(x_pos + SQUARE_SIZE - 1), (float)(y_pos + SQUARE_SIZE - 1), COLOR_CANPUT, true, 2.0f);
 				break;
@@ -218,13 +225,20 @@ void Game::Draw() {
 		}
 		x_pos += SQUARE_SIZE;
 	}
+	
+
+
 	//選択枠表示
 	if (onBoard && m_state.turn == Share::playerColor) {
-		DrawBoxAA((float)(SIDE_MARGIN + (m_selectCoord.x * SQUARE_SIZE) + 1), (float)(TOP_MARGIN + (m_selectCoord.y * SQUARE_SIZE) + 1), (float)(SIDE_MARGIN + ((m_selectCoord.x + 1) * SQUARE_SIZE) - 1), (float)(TOP_MARGIN + ((m_selectCoord.y + 1) * SQUARE_SIZE) - 1), COLOR_BLUE, false, 5.0f);
+		int x , y;
+		getCoord(&x ,&y  , m_selectSquare);
+		DrawBoxAA((float)(SIDE_MARGIN + (x * SQUARE_SIZE) + 1), (float)(TOP_MARGIN + (y * SQUARE_SIZE) + 1), (float)(SIDE_MARGIN + ((x + 1) * SQUARE_SIZE) - 1), (float)(TOP_MARGIN + ((y + 1) * SQUARE_SIZE) - 1), COLOR_BLUE, false, 5.0f);
 	}
 	//置いた場所
-	if (m_currentPut.check()) {
-		DrawCircleAA((float)(SIDE_MARGIN + SQUARE_SIZE * m_currentPut.x + SQUARE_SIZE / 2 - 3), (float)(TOP_MARGIN + SQUARE_SIZE * m_currentPut.y + SQUARE_SIZE / 2 - 4), 10, 15, COLOR_LBLUE, true, 0);
+	if (m_recentPut != 0) {
+		int x, y;
+		getCoord(&x, &y, m_recentPut);
+		DrawCircleAA((float)(SIDE_MARGIN + SQUARE_SIZE * x + SQUARE_SIZE / 2 - 3), (float)(TOP_MARGIN + SQUARE_SIZE * y + SQUARE_SIZE / 2 - 4), 10, 15, COLOR_LBLUE, true, 0);
 	}
 
 	//個数表示
@@ -314,6 +328,10 @@ void Game::Finalize() {
 	if (nowToMenu) {
 		PlaySoundMem(m_stopSnd , DX_PLAYTYPE_NORMAL, true);
 	}
+
+	//初期化
+	m_recentPut = 0;
+
 	//勝者の記録
 	Share::playerStatus = m_state.getWinningStatus(Share::playerColor);
 	Share::blackNum = m_state.getNum(BLACK);
@@ -355,4 +373,29 @@ void Game::deleteMem() {
 	DeleteSoundMem(m_passSnd);
 	DeleteSoundMem(m_undoSnd);
 	DeleteSoundMem(m_stopSnd);
+}
+
+void Game::setSelectSquare(const int x , const int y) {
+	int pointX = (x - SIDE_MARGIN) / SQUARE_SIZE;
+	int pointY = (y - TOP_MARGIN) / SQUARE_SIZE;
+	
+	if (0 <= pointX && pointX <BOARD_SIZE && 0 <= pointY && pointY < BOARD_SIZE) {
+		m_selectSquare = HIGHEST >> pointX + pointY * BOARD_SIZE;
+	}
+	else {
+		m_selectSquare = 0;
+	}
+}
+
+void Game::getCoord(int* xp, int* yp, const uint64_t board)const {
+	for (int x = 0; x < BOARD_SIZE; x++) {
+		for (int y = 0; y < BOARD_SIZE; y++) {
+			if (((HIGHEST >> x + y * BOARD_SIZE) & board) != 0) {
+				*xp = x;
+				*yp = y;
+				return;
+			}
+		}
+	}
+	return;
 }

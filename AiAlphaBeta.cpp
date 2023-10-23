@@ -1,8 +1,8 @@
 #include "AiAlphaBeta.h"
 
-int alphaBetaScore(const OthelloState&, int, const int, const int);
+int alphaBetaScore(const BitState&, int, const int, const int);
 
-Coord alphaBetaAction(OthelloState state, const int depth) {
+uint64_t alphaBetaAction(BitState state, const int depth) {
 	//合法手が一つ以下なら即決
 	auto legalActions = state.legalAction();
 	if (legalActions.size() <= 1) {
@@ -12,7 +12,7 @@ Coord alphaBetaAction(OthelloState state, const int depth) {
 	int alpha = -1000000; //最善の評価値
 	int beta = 1000000;
 	for (int i = 0; i < legalActions.size(); i++) {
-		OthelloState next_state = state;
+		BitState next_state = state;
 		next_state.advance(legalActions[i]);
 		//相手のスコアなので反転
 		int score = -alphaBetaScore(next_state, -beta, -alpha, depth);
@@ -24,7 +24,7 @@ Coord alphaBetaAction(OthelloState state, const int depth) {
 	return legalActions[bestIndex];
 }
 
-int alphaBetaScore(const OthelloState& state, int alpha, const int beta, const int depth) {
+int alphaBetaScore(const BitState& state, int alpha, const int beta, const int depth) {
 	//ゲーム終了か探索終了深度ではそのまま返す
 	if (state.isDone() || depth == 0) {
 		return state.getEvaluation();
@@ -33,7 +33,7 @@ int alphaBetaScore(const OthelloState& state, int alpha, const int beta, const i
 	auto legalactions = state.legalAction();
 	for (const auto action : legalactions) {
 		//コピーコンストラクタ
-		OthelloState next_state = state;
+		BitState next_state = state;
 		next_state.advance(action);
 		//次の状態のスコアを取得(相手だから視点を反転)
 		int score = -alphaBetaScore(next_state, -beta, -alpha, depth - 1);

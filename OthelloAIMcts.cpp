@@ -4,7 +4,7 @@ namespace {
 	const int serchTime = 10000;
 }
 
-Coord mctsActionOthello(const OthelloState &state , const int playoutNum) {
+uint64_t mctsActionOthello(const BitState &state , const int playoutNum) {
 	//	‡–@è‚ªˆê‚Â‚¾‚¯‚Ì‚Í‚»‚Ì‚Ü‚Ü
 	if (state.legalAction().size() == 1) {
 		return state.legalAction()[0];

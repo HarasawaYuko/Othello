@@ -3,19 +3,21 @@
 
 #include "BaseScene.h"
 #include "SceneChanger.h"
-
+#include "BitState.h"
 #include "OthelloState.h"
 #include "include.h"
 
-using AIFunction = std::function<Coord(const OthelloState &)>;
+using AIFunction = std::function<uint64_t(const BitState &)>;
 
 class Game :public BaseScene {
 private:
 	//ゲーム進行用変数
-	OthelloState m_state;
-	Coord m_selectCoord = Coord(0, 0);
-	Coord m_currentPut = Coord(-1, 0);
-	std::vector<std::pair<OthelloState, Coord>> undo_vec;
+	BitState m_state;
+	//Coord m_selectCoord = Coord(0, 0);
+	uint64_t m_selectSquare = 0;
+	//Coord m_currentPut = Coord(-1, 0);
+	uint64_t m_recentPut = 0;
+	std::vector<std::pair<BitState, uint64_t>> undo_vec;
 	AIFunction aiFunc;
 
 	//画像ハンドル
@@ -36,6 +38,10 @@ private:
 	int m_stopSnd;
 	//AI用
 	int m_playoutNum;
+
+	uint64_t CoordToBit(Coord);
+	void getCoord(int* , int* , const uint64_t)const;
+	void setSelectSquare(const int , const int);
 public:
 	//関数
 	void MouseToCoord(int, int, Coord*);

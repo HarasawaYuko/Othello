@@ -13,7 +13,7 @@ static const int TURN_RADIO_SELECT_SIZE = 13;
 static const int TURN_RADIO_SPACE = 210;
 
 //Ai選択スワイプボタン関係
-static const int AI_LEVEL_MAX[] = { 10 , 7 };
+static const int AI_LEVEL_MAX[] = { 10 , 10 };
 static       int AI_INDEX = 0;
 static const int AI_NUM = 2;
 static const int AI_SWIPE_Y = 310;

@@ -1,5 +1,6 @@
 #pragma once
 #include "OthelloState.h"
+#include "BitState.h"
 
-Coord randomActionOthello(const OthelloState &);
-double playout(OthelloState*);
+uint64_t randomActionOthello(const BitState &);
+double playout(BitState*);
