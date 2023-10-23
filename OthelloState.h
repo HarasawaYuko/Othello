@@ -15,7 +15,7 @@ public:
 };
 
 
-static const int BOARD_SIZE = 8;
+
 
 class OthelloState {
 private:

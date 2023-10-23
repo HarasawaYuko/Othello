@@ -22,6 +22,8 @@ enum Ai{
 	AI_Alpha = 1
 };
 
+const int BOARD_SIZE = 8;
+
 class Share {
 private:
 	Share();

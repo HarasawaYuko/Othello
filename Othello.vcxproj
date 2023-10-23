@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="AiAlphaBeta.cpp" />
     <ClCompile Include="BaseScene.cpp" />
+    <ClCompile Include="BitState.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
@@ -158,6 +159,7 @@
   <ItemGroup>
     <ClInclude Include="AialphaBeta.h" />
     <ClInclude Include="BaseScene.h" />
+    <ClInclude Include="BitState.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="include.h" />
     <ClInclude Include="Menu.h" />
