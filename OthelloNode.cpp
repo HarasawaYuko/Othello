@@ -5,7 +5,7 @@ namespace {
 	const double C = 1.0;
 }
 
-othelloNode::othelloNode(const OthelloState& state)
+othelloNode::othelloNode(const BitState& state)
 	:state(state), w(0), n(0)
 {
 	this->child_nodes.clear();
@@ -33,7 +33,7 @@ double othelloNode::evaluate() {
 	//子ノードがないとき
 	if (this->child_nodes.empty()) {
 		//プレイアウトする
-		OthelloState state_tmp = this->state;
+		BitState state_tmp = this->state;
 		double value = playout(&state_tmp);
 		this->w += value;
 		n++;
@@ -64,8 +64,7 @@ double othelloNode::evaluate() {
 
 //ノードの展開
 void othelloNode::expand() {
-	std::vector<Coord> legalActions;
-	legalActions = this->state.legalAction();
+	auto legalActions = this->state.legalAction();
 	/*for (const auto action : legalActions) {
 		othelloNode tmp = othelloNode(this->state);
 		tmp.state.advance(action);

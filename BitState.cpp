@@ -38,10 +38,7 @@ static const int EVAL[64] =
 };
 
 //ビットマスク
-static const uint64_t ALL_T   = 0b11111111'11111111'11111111'11111111'11111111'11111111'11111111'11111111;
-static const uint64_t ALL_F   = 0b00000000'00000000'00000000'00000000'00000000'00000000'00000000'00000000;
-static const uint64_t LOWEST  = 0b00000000'00000000'00000000'00000000'00000000'00000000'00000000'00000001;
-static const uint64_t HIGHEST  = 0b10000000'00000000'00000000'00000000'00000000'00000000'00000000'00000000;
+
 static const uint64_t TOP_F   = 0b00000000'11111111'11111111'11111111'11111111'11111111'11111111'11111111;
 static const uint64_t UNDER_F = 0b11111111'11111111'11111111'11111111'11111111'11111111'11111111'00000000;
 static const uint64_t RIGHT_F = 0b11111110'11111110'11111110'11111110'11111110'11111110'11111110'11111110;
@@ -238,6 +235,10 @@ bool BitState::isDone() const{
 	return (getLegalBoard(WHITE) == 0 ) && (getLegalBoard(BLACK) == 0);
 }
 
+bool BitState::isCanPut(uint64_t action) const {
+	return (action & canput_board) != 0;
+}
+
 int BitState::getNum(piece color) const{
 	uint64_t my;
 	int count = 0;
@@ -275,6 +276,24 @@ WinningStatus BitState::getWinningStatus() const{
 			return WIN;
 		}
 		else if (getNum((piece)turn) < getNum((piece)ene_color)) {
+			return LOSE;
+		}
+		else {
+			return DRAW;
+		}
+	}
+	else {
+		return NONE;
+	}
+}
+
+WinningStatus BitState::getWinningStatus(piece color) const {
+	piece ene_color = (piece)(color ^ 1);
+	if (isDone()) {
+		if (getNum((piece)color) > getNum((piece)ene_color)) {
+			return WIN;
+		}
+		else if (getNum((piece)color) < getNum((piece)ene_color)) {
 			return LOSE;
 		}
 		else {
@@ -327,3 +346,21 @@ void shift(uint64_t* board, bool right, int vec, int num) {
 	}
 }
 
+//入力座標をビットボードに変換する
+uint64_t BitState::CoordToBit(Coord coord) const{
+	uint64_t result = HIGHEST;
+	return result >> (coord.x + coord.y * BOARD_SIZE);
+}
+
+piece BitState::getPiece(uint64_t coord)  const {
+	if ((my_board & coord) != 0) {
+		return (piece)turn;
+	}
+	else if ((all_board & coord) != 0) {
+		return (piece)(turn ^ 1);
+	}
+	else if ((canput_board & coord) != 0) {
+		return CANPUT;
+	}
+	return UNPUT;
+}

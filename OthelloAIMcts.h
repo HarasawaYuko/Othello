@@ -3,5 +3,6 @@
 #include "othelloNode.h"
 #include "OthelloState.h"
 #include "TimeKeeper.h"
+#include "BitState.h"
 
-Coord mctsActionOthello(const OthelloState& ,const int);
+uint64_t mctsActionOthello(const BitState& ,const int);

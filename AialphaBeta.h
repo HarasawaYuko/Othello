@@ -1,4 +1,5 @@
 #pragma once
 #include "OthelloState.h"
+#include "BitState.h"
 
-Coord alphaBetaAction(OthelloState, const int);
+uint64_t alphaBetaAction(BitState, const int);

@@ -4,14 +4,14 @@ namespace {
 	std::mt19937 random_for_action(1);
 }
 
-Coord randomActionOthello(const OthelloState& state) {
+uint64_t randomActionOthello(const BitState& state) {
 	auto legalActions = state.legalAction();
 	return legalActions[random_for_action()%legalActions.size()];
 }
 
 
 //探索用プレイアウト
-double playout(OthelloState *state) {
+double playout(BitState *state) {
 	switch (state->getWinningStatus()) {
 	case WIN:
 		return 1.0;
