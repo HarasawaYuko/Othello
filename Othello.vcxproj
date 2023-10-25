@@ -141,38 +141,40 @@
   <ItemGroup>
     <ClCompile Include="AiAlphaBeta.cpp" />
     <ClCompile Include="BaseScene.cpp" />
-    <ClCompile Include="BitState.cpp" />
+    <ClCompile Include="State.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
-    <ClCompile Include="OthelloAIMcts.cpp" />
-    <ClCompile Include="OthelloAIRandom.cpp" />
-    <ClCompile Include="OthelloNode.cpp" />
-    <ClCompile Include="OthelloState.cpp" />
+    <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="AiMcts.cpp" />
+    <ClCompile Include="AiRandom.cpp" />
+    <ClCompile Include="MctsNode.cpp" />
     <ClCompile Include="Result.cpp" />
     <ClCompile Include="SceneChanger.cpp" />
     <ClCompile Include="SceneMgr.cpp" />
     <ClCompile Include="Share.cpp" />
     <ClCompile Include="Task.cpp" />
     <ClCompile Include="TimeKeeper.cpp" />
+    <ClCompile Include="UIMaterial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AialphaBeta.h" />
     <ClInclude Include="BaseScene.h" />
-    <ClInclude Include="BitState.h" />
+    <ClInclude Include="State.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="include.h" />
     <ClInclude Include="Menu.h" />
-    <ClInclude Include="OhtelloAIRandom.h" />
-    <ClInclude Include="OthelloAIMcts.h" />
-    <ClInclude Include="OthelloNode.h" />
-    <ClInclude Include="OthelloState.h" />
+    <ClInclude Include="Mouse.h" />
+    <ClInclude Include="AiRandom.h" />
+    <ClInclude Include="AiMcts.h" />
+    <ClInclude Include="MctsNode.h" />
     <ClInclude Include="Result.h" />
     <ClInclude Include="SceneChanger.h" />
     <ClInclude Include="SceneMgr.h" />
     <ClInclude Include="Share.h" />
     <ClInclude Include="Task.h" />
     <ClInclude Include="TimeKeeper.h" />
+    <ClInclude Include="UIMaterial.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

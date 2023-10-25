@@ -1,5 +1,5 @@
 #pragma once
 #include "OthelloState.h"
-#include "BitState.h"
+#include "State.h"
 
-uint64_t alphaBetaAction(BitState, const int);
+uint64_t alphaBetaAction(State, const int);

@@ -1,8 +1,8 @@
 #include "Game.h"
 #include "Share.h"
 #include "TimeKeeper.h"
-#include "OthelloAIMcts.h"
-#include "OhtelloAIRandom.h"
+#include "AiMcts.h"
+#include "AiRandom.h"
 #include "AialphaBeta.h"
 
 /***定数***/
@@ -66,16 +66,16 @@ Game::~Game()
 {}
 
 void Game::Initialize() {
-	m_state = BitState();
+	m_state = State();
 	timer = false;
 	
 	//AIを設定
 	switch (Share::ai) {
 	case AI_MCTS:
-		aiFunc = [](const BitState& state) {return mctsActionOthello(state, PLAYOUT_NUM_LEVEL * Share::level); };
+		aiFunc = [](const State& state) {return mctsActionOthello(state, PLAYOUT_NUM_LEVEL * Share::level); };
 		break;
 	case AI_Alpha:
-		aiFunc = [](const BitState& state) {return alphaBetaAction(state, Share::level); };
+		aiFunc = [](const State& state) {return alphaBetaAction(state, Share::level); };
 		break;
 	}
 
@@ -343,19 +343,19 @@ void Game::Finalize() {
 /*
 * マウスの座標を盤面上のPointに変換
 */
-void Game::MouseToCoord(int x, int y, Coord* point) {
-	int pointX = (x - SIDE_MARGIN) / SQUARE_SIZE;
-	int pointY = (y - TOP_MARGIN) / SQUARE_SIZE;
-	Coord tmp = Coord(pointX, pointY);
-	if (tmp.check() && (x - SIDE_MARGIN) > 0 && (y - TOP_MARGIN) > 0) {
-		onBoard = true;
-	}
-	else {
-		onBoard = false;
-	}
-	point->x = tmp.x;
-	point->y = tmp.y;
-}
+//void Game::MouseToCoord(int x, int y, Coord* point) {
+//	int pointX = (x - SIDE_MARGIN) / SQUARE_SIZE;
+//	int pointY = (y - TOP_MARGIN) / SQUARE_SIZE;
+//	Coord tmp = Coord(pointX, pointY);
+//	if (tmp.check() && (x - SIDE_MARGIN) > 0 && (y - TOP_MARGIN) > 0) {
+//		onBoard = true;
+//	}
+//	else {
+//		onBoard = false;
+//	}
+//	point->x = tmp.x;
+//	point->y = tmp.y;
+//}
 
 
 void Game::deleteMem() {
@@ -380,7 +380,7 @@ void Game::setSelectSquare(const int x , const int y) {
 	int pointY = (y - TOP_MARGIN) / SQUARE_SIZE;
 	
 	if (0 <= pointX && pointX <BOARD_SIZE && 0 <= pointY && pointY < BOARD_SIZE) {
-		m_selectSquare = HIGHEST >> pointX + pointY * BOARD_SIZE;
+		m_selectSquare = HIGHEST >> (pointX + pointY * BOARD_SIZE);
 	}
 	else {
 		m_selectSquare = 0;
@@ -390,7 +390,7 @@ void Game::setSelectSquare(const int x , const int y) {
 void Game::getCoord(int* xp, int* yp, const uint64_t board)const {
 	for (int x = 0; x < BOARD_SIZE; x++) {
 		for (int y = 0; y < BOARD_SIZE; y++) {
-			if (((HIGHEST >> x + y * BOARD_SIZE) & board) != 0) {
+			if (((HIGHEST >> (x + y * BOARD_SIZE)) & board) != 0) {
 				*xp = x;
 				*yp = y;
 				return;

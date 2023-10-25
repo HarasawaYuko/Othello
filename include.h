@@ -9,5 +9,7 @@
 
 #include "DxLib.h"
 
-#define WIN_SIZE_X 800
-#define WIN_SIZE_Y 600
+//âÊñ ÉTÉCÉY
+constexpr int WIN_SIZE_X = 800;
+constexpr int WIN_SIZE_Y = 600;
+constexpr int WIN_CENT_X = WIN_SIZE_X / 2;
