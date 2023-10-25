@@ -1,6 +1,5 @@
 #pragma once
 #include "include.h"
-#include "OthelloState.h"
 #include "AiRandom.h"
 #include "State.h"
 

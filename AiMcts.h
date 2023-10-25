@@ -1,7 +1,6 @@
 #pragma once
 #include "include.h"
 #include "MctsNode.h"
-#include "OthelloState.h"
 #include "TimeKeeper.h"
 #include "State.h"
 

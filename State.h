@@ -1,7 +1,6 @@
 #pragma once
 #include "include.h"
 #include "Share.h"
-#include "OthelloState.h"
 //オセロのゲーム本体に関するクラス
 
 const uint64_t ALL_T = 0b11111111'11111111'11111111'11111111'11111111'11111111'11111111'11111111;

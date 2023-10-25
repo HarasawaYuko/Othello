@@ -1,5 +1,4 @@
 #include "Menu.h"
-#include "OthelloState.h"
 #include "Share.h"
 
 //マウス押下フレーム数

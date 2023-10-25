@@ -4,7 +4,6 @@
 #include "BaseScene.h"
 #include "SceneChanger.h"
 #include "State.h"
-#include "OthelloState.h"
 #include "include.h"
 
 using AIFunction = std::function<uint64_t(const State &)>;
