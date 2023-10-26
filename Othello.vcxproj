@@ -158,7 +158,7 @@
     <ClCompile Include="UIMaterial.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AialphaBeta.h" />
+    <ClInclude Include="AiAlphaBeta.h" />
     <ClInclude Include="BaseScene.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="Game.h" />

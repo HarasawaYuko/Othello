@@ -1,9 +1,6 @@
 #include "Menu.h"
 #include "Share.h"
 
-//マウス押下フレーム数
-static int mouseLeftFrame = 0;
-
 //ターン選択ラジオボタン関係
 static const int TURN_RADIO_Y = 250;
 static const int TURN_RADIO_X = 220;
@@ -33,7 +30,7 @@ static const int START_BUTTON_HEIGHT = 50;
 //サイドバー関係
 static const int BAR_X = 180;
 static const int BAR_Y = 420;
-static const int BAR_LENGTH = 350;
+static const int BAR_WIDTH = 350;
 static const int BAR_HEIGHT = 6;
 static const int BAR_SELECT_SIZE = 13;
 
@@ -119,32 +116,20 @@ void Menu::Update() {
 	nowSwipe = false;
 
 	//マウス位置の取得
-	int mousePosX;
-	int mousePosY;
-	int mouseInput;
-	GetMousePoint(&mousePosX, &mousePosY);
-	mouseInput = GetMouseInput();
-	if (mouseInput & MOUSE_INPUT_LEFT) {
-		mouseLeftFrame++;
-	}
-	else {
-		mouseLeftFrame = 0;
-	}
+	Mouse::instance()->update();
 
 	//手番選択用ラジオボタン
-	int radioFirstLeft = TURN_RADIO_X - TURN_RADIO_SIZE;
-	int radioFirstRight = TURN_RADIO_X + TURN_RADIO_SIZE;
-	int radioFirstTop = TURN_RADIO_Y - TURN_RADIO_SIZE;
-	int radioFirstUnder = TURN_RADIO_Y + TURN_RADIO_SIZE;
-	if (radioFirstLeft <= mousePosX && mousePosX <= radioFirstRight && radioFirstTop <= mousePosY && mousePosY <= radioFirstUnder) {
-		if (mouseLeftFrame == 1) {
+	int radioFirstX = TURN_RADIO_X - TURN_RADIO_SIZE;
+	int radioFirstY = TURN_RADIO_Y - TURN_RADIO_SIZE;
+	if (Share::isIn(radioFirstX , radioFirstY , TURN_RADIO_SIZE*2 , TURN_RADIO_SIZE * 2)) {
+		if (Mouse::instance()->getClickNow(clickCode::LEFT_CLICK)) {
 			Share::playerColor = BLACK;
 			nowRadio = true;
 		}
 		onRadioBlack = true;
 	}
-	if (radioFirstLeft + TURN_RADIO_SPACE <= mousePosX && mousePosX <= radioFirstRight + TURN_RADIO_SPACE && radioFirstTop <= mousePosY && mousePosY <= radioFirstUnder) {
-		if (mouseLeftFrame == 1) {
+	if (Share::isIn(radioFirstX + TURN_RADIO_SPACE, radioFirstY, TURN_RADIO_SIZE * 2, TURN_RADIO_SIZE * 2)) {
+		if (Mouse::instance()->getClickNow(clickCode::LEFT_CLICK)) {
 			Share::playerColor = WHITE;
 			nowRadio = true;
 		}
@@ -152,17 +137,17 @@ void Menu::Update() {
 	}
 
 	//AI選択用スワイプボタン
-	if (Share::isIn(AI_SWIPE_X , AI_SWIPE_Y , AI_SWIPE_WIDTH  , AI_SWIPE_HEIGHT , mousePosX , mousePosY)) {
+	if (Share::isIn(AI_SWIPE_X , AI_SWIPE_Y , AI_SWIPE_WIDTH  , AI_SWIPE_HEIGHT)) {
 		onSwipeLeft = true;
-		if (mouseLeftFrame == 1) {
+		if (Mouse::instance()->getClickNow(clickCode::LEFT_CLICK)) {
 			AI_INDEX--;
 			if (AI_INDEX < 0) AI_INDEX = AI_NUM - 1;
 			nowSwipe = true;
 		}
 	}
-	if (Share::isIn(AI_SWIPE_X + AI_SWIPE_SPACE, AI_SWIPE_Y, AI_SWIPE_WIDTH, AI_SWIPE_HEIGHT, mousePosX, mousePosY)) {
+	if (Share::isIn(AI_SWIPE_X + AI_SWIPE_SPACE, AI_SWIPE_Y, AI_SWIPE_WIDTH, AI_SWIPE_HEIGHT)) {
 		onSwipeRight = true;
-		if (mouseLeftFrame == 1) {
+		if (Mouse::instance()->getClickNow(clickCode::LEFT_CLICK)) {
 			AI_INDEX = (AI_INDEX + 1) % AI_NUM;
 			nowSwipe = true;
 		}
@@ -172,11 +157,11 @@ void Menu::Update() {
 	//サイドバー
 	//レベルの設定
 	m_level = Share::level;
-	Share::level = (m_bar_select_x - BAR_X) / (BAR_LENGTH / AI_LEVEL_MAX[AI_INDEX]) + 1;
-	if (BAR_X <= mousePosX && mousePosX <= BAR_X + BAR_LENGTH && BAR_Y - BAR_SELECT_SIZE <= mousePosY && mousePosY <= BAR_Y + BAR_SELECT_SIZE) {
+	Share::level = (m_bar_select_x - BAR_X) / (BAR_WIDTH / AI_LEVEL_MAX[AI_INDEX]) + 1;
+	if (Share::isIn(BAR_X , BAR_Y - BAR_SELECT_SIZE , BAR_WIDTH , BAR_HEIGHT + BAR_SELECT_SIZE *2)) {
 		onSideBar = true;
-		if (mouseInput & MOUSE_INPUT_LEFT) {
-			m_bar_select_x = mousePosX;
+		if (Mouse::instance()->getClick(LEFT_CLICK)) {
+			m_bar_select_x = Mouse::instance()->getX();
 			if (Share::level != m_level) {
 				nowSide = true;
 			}
@@ -184,17 +169,17 @@ void Menu::Update() {
 	}
 
 	//開始ボタン
-	if (START_BUTTON_X <= mousePosX && mousePosX <= START_BUTTON_X + START_BUTTON_WIDTH && START_BUTTON_Y <= mousePosY && mousePosY <= START_BUTTON_Y + START_BUTTON_HEIGHT) {
-		if (mouseLeftFrame == 1) {
+	if (Share::isIn(START_BUTTON_X , START_BUTTON_Y , START_BUTTON_WIDTH , START_BUTTON_HEIGHT)) {
+		if (Mouse::instance()->getClickNow(LEFT_CLICK)) {
 			m_sceneChanger->ChangeScene(Scene_Game);
 			nowStart = true;
 		}
 		onStartButton = true;
 	}
 	//閉じるボタン
-	if (Share::isIn(CLOSE_X, CLOSE_Y, CLOSE_X + CLOSE_WIDTH, CLOSE_Y + CLOSE_HEIGHT, mousePosX, mousePosY)) {
+	if (Share::isIn(CLOSE_X, CLOSE_Y, CLOSE_X + CLOSE_WIDTH, CLOSE_Y + CLOSE_HEIGHT)) {
 		onClose = true;
-		if (mouseLeftFrame == 1) {
+		if (Mouse::instance()->getClickNow(LEFT_CLICK)) {
 			m_sceneChanger->ChangeScene(Scene_Fin);
 		}
 	}
@@ -242,16 +227,16 @@ void Menu::Draw() {
 	DrawString(AI_STR_X , AI_STR_Y , Share::AI[AI_INDEX].c_str() , GetColor(30 , 30 , 30));
 
 	//難易度調整バー
-	DrawBoxAA(BAR_X, BAR_Y, BAR_X + BAR_LENGTH, BAR_Y + BAR_HEIGHT, GetColor(120, 120, 120), true);
+	DrawBoxAA(BAR_X, BAR_Y, BAR_X + BAR_WIDTH, BAR_Y + BAR_HEIGHT, GetColor(120, 120, 120), true);
 	//選択箇所表示
 	DrawCircle(m_bar_select_x, BAR_Y, BAR_SELECT_SIZE, GetColor(10, 70, 150), true);
 	if (onSideBar) {
 		DrawCircle(m_bar_select_x, BAR_Y, BAR_SELECT_SIZE, GetColor(101, 187, 233), false, 3);
 	}
 	SetFontSize(35);
-	DrawFormatString(BAR_X + BAR_LENGTH + 95, BAR_Y - 20, GetColor(20, 20, 20), "%d", Share::level);
+	DrawFormatString(BAR_X + BAR_WIDTH + 95, BAR_Y - 20, GetColor(20, 20, 20), "%d", Share::level);
 	SetFontSize(20);
-	DrawFormatString(BAR_X + BAR_LENGTH + 20, BAR_Y - 8, GetColor(20, 20, 20), "LEVEL:");
+	DrawFormatString(BAR_X + BAR_WIDTH + 20, BAR_Y - 8, GetColor(20, 20, 20), "LEVEL:");
 
 	//開始ボタン
 	SetFontSize(35);

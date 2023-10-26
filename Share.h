@@ -1,6 +1,6 @@
 #pragma once
 #include "include.h"
-
+#include "Mouse.h"
 //共通変数を管理するstaticクラス
 
 enum WinningStatus {
@@ -39,5 +39,6 @@ public:
 	static Ai ai;
 	//プロトタイプ宣言
 	static bool isIn(const int, const int, const int, const int, const int, const int);
+	static bool isIn(const int , const int , const int , const int);
 	static void Share_Initialize();
 };

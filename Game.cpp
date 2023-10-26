@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Share.h"
+#include "Mouse.h"
 #include "TimeKeeper.h"
 #include "AiMcts.h"
 #include "AiRandom.h"
@@ -113,12 +114,9 @@ void Game::Update() {
 	onUndo = false;
 	onStop = false;
 	//マウス位置の取得
-	int mousePosX;
-	int mousePosY;
-	int mouseInput;
-	GetMousePoint(&mousePosX, &mousePosY);
-	mouseInput = GetMouseInput();
-	setSelectSquare(mousePosX, mousePosY);
+	Mouse::instance()->update();
+
+	setSelectSquare(Mouse::instance()->getX(), Mouse::instance()->getY());
 	if (m_selectSquare == 0) {
 		onBoard = false;
 	}
@@ -135,7 +133,7 @@ void Game::Update() {
 				nowPass = true;
 			}
 			//置く
-			else if (mouseInput & MOUSE_INPUT_LEFT && m_state.isCanPut(m_selectSquare)) {
+			else if (Mouse::instance()->getClickNow(LEFT_CLICK) && m_state.isCanPut(m_selectSquare)) {
 				//置く前に
 				undo_vec.push_back(std::make_pair(m_state, m_recentPut));
 				if (undo_vec.size() > UNDO_NUM) {
@@ -150,8 +148,6 @@ void Game::Update() {
 		//AIの手番
 		else {
 			TimeKeeper tk_think = TimeKeeper(THINK_TIME);
-			//Coord tmp = mctsActionOthello(m_state, m_playoutNum);
-			//Coord tmp = alphaBetaAction(m_state, 6);
 			uint64_t tmp = aiFunc(m_state);
 			m_state.advance(tmp);
 			if (tmp != 0) {
@@ -176,9 +172,9 @@ void Game::Update() {
 		}
 	}
 
-	if (Share::isIn(UNDO_X, UNDO_Y, UNDO_X + UNDO_WIDTH, UNDO_Y + UNDO_HEIGHT, mousePosX, mousePosY)) {
+	if (Share::isIn(UNDO_X, UNDO_Y, UNDO_X + UNDO_WIDTH, UNDO_Y + UNDO_HEIGHT)) {
 		onUndo = true;
-		if (mouseInput & MOUSE_INPUT_LEFT && undo_vec.size() > 0) {
+		if (Mouse::instance()->getClickNow(LEFT_CLICK) && undo_vec.size() > 0) {
 			m_state = undo_vec.back().first;
 			m_recentPut = undo_vec.back().second;
 			nowUndo = true;
@@ -186,9 +182,9 @@ void Game::Update() {
 		}
 	}
 	//終了ボタン
-	if (Share::isIn(STOP_X, STOP_Y, STOP_X + STOP_WIDTH, STOP_Y + STOP_HEIGHT, mousePosX, mousePosY)) {
+	if (Share::isIn(STOP_X, STOP_Y, STOP_X + STOP_WIDTH, STOP_Y + STOP_HEIGHT)) {
 		onStop = true;
-		if (mouseInput & MOUSE_INPUT_LEFT) {
+		if (Mouse::instance()->getClickNow(LEFT_CLICK)) {
 			m_sceneChanger->ChangeScene(Scene_Menu);
 			nowToMenu = true;
 		}
@@ -302,6 +298,7 @@ void Game::Draw() {
 	if (onUndo) {
 		DrawExtendGraph(UNDO_X, UNDO_Y, UNDO_X + UNDO_WIDTH, UNDO_Y + UNDO_HEIGHT, m_undoFramePic, true);
 	}
+
 	//stopボタン
 	DrawExtendGraph(STOP_X, STOP_Y, STOP_X + STOP_WIDTH, STOP_Y + STOP_HEIGHT, m_stopButtonPic, true);
 	if (onStop) {
