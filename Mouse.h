@@ -22,9 +22,8 @@ private:
 	Mouse& operator=(const Mouse&){}
 
 public:
-	static Mouse* getInstance();
+	static Mouse* instance();
 	void update();
-	void finalize();
 	bool getClick(clickCode);
 	bool getClickNow(clickCode);
 	int getX();

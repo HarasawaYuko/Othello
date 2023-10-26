@@ -1,6 +1,6 @@
 #include "Mouse.h"
 
-Mouse* Mouse::getInstance() {
+Mouse* Mouse::instance() {
 	static Mouse instance;
 	return &instance;
 }
@@ -17,10 +17,6 @@ void Mouse::update() {
 			mouseInput[i] = 0;
 		}
 	}
-}
-
-void Mouse::finalize() {
-
 }
 
 bool Mouse::getClick(clickCode code) {

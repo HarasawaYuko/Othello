@@ -12,9 +12,7 @@ class Game :public BaseScene {
 private:
 	//ゲーム進行用変数
 	State m_state;
-	//Coord m_selectCoord = Coord(0, 0);
 	uint64_t m_selectSquare = 0;
-	//Coord m_currentPut = Coord(-1, 0);
 	uint64_t m_recentPut = 0;
 	std::vector<std::pair<State, uint64_t>> undo_vec;
 	AIFunction aiFunc;

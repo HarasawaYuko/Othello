@@ -2,6 +2,7 @@
 
 #include "BaseScene.h"
 #include "SceneChanger.h"
+#include "Mouse.h"
 
 #include "include.h"
 
