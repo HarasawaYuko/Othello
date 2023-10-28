@@ -38,7 +38,5 @@ public:
 	static const std::string AI[2];
 	static Ai ai;
 	//プロトタイプ宣言
-	static bool isIn(const int, const int, const int, const int, const int, const int);
-	static bool isIn(const int , const int , const int , const int);
 	static void Share_Initialize();
 };

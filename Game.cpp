@@ -5,6 +5,7 @@
 #include "AiMcts.h"
 #include "AiRandom.h"
 #include "AialphaBeta.h"
+#include "UIMaterial.h"
 
 /***定数***/
 static const int TOP_MARGIN = 50;//上側マージン
@@ -171,7 +172,7 @@ void Game::Update() {
 		}
 	}
 
-	if (Share::isIn(UNDO_X, UNDO_Y, UNDO_X + UNDO_WIDTH, UNDO_Y + UNDO_HEIGHT)) {
+	if (isIn(UNDO_X, UNDO_Y, UNDO_X + UNDO_WIDTH, UNDO_Y + UNDO_HEIGHT)) {
 		onUndo = true;
 		if (Mouse::instance()->getClickNow(LEFT_CLICK) && undo_vec.size() > 0) {
 			m_state = undo_vec.back().first;
@@ -181,7 +182,7 @@ void Game::Update() {
 		}
 	}
 	//終了ボタン
-	if (Share::isIn(STOP_X, STOP_Y, STOP_X + STOP_WIDTH, STOP_Y + STOP_HEIGHT)) {
+	if (isIn(STOP_X, STOP_Y, STOP_X + STOP_WIDTH, STOP_Y + STOP_HEIGHT)) {
 		onStop = true;
 		if (Mouse::instance()->getClickNow(LEFT_CLICK)) {
 			m_sceneChanger->ChangeScene(Scene_Menu);
@@ -335,24 +336,6 @@ void Game::Finalize() {
 	//ハンドルの解放
 	deleteMem();
 }
-
-/*
-* マウスの座標を盤面上のPointに変換
-*/
-//void Game::MouseToCoord(int x, int y, Coord* point) {
-//	int pointX = (x - SIDE_MARGIN) / SQUARE_SIZE;
-//	int pointY = (y - TOP_MARGIN) / SQUARE_SIZE;
-//	Coord tmp = Coord(pointX, pointY);
-//	if (tmp.check() && (x - SIDE_MARGIN) > 0 && (y - TOP_MARGIN) > 0) {
-//		onBoard = true;
-//	}
-//	else {
-//		onBoard = false;
-//	}
-//	point->x = tmp.x;
-//	point->y = tmp.y;
-//}
-
 
 void Game::deleteMem() {
 	DeleteGraph(m_gamePic);

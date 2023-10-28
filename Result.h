@@ -16,12 +16,12 @@ private:
 	int m_retrySnd;
 
 	//•`‰æ—p•Ï”
-	static bool onNext;
-	static bool onRetry;
+	bool onNext;
+	bool onRetry;
 
 	//‰¹º”»’è—p
-	static bool nowNext;
-	static bool nowRetry;
+	bool nowNext;
+	bool nowRetry;
 
 public:
 	//ŠÖ”

@@ -2,7 +2,7 @@
 
 #include "BaseScene.h"
 #include "SceneChanger.h"
-
+#include "UIMaterial.h"
 #include "include.h"
 
 //メニュー画面クラス
@@ -40,6 +40,8 @@ private:
 	bool nowRadio;
 	bool nowSide;
 	bool nowSwipe;
+
+	Button startButton;
 
 	//描画用
 	int m_bar_select_x;

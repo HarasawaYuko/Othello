@@ -2,6 +2,8 @@
 #include "include.h"
 #include <functional>
 
+bool isIn(const int, const int, const int, const int);
+
 class Button {
 private:
 	int pic;
@@ -10,9 +12,12 @@ private:
 	int y;
 	int width;
 	int height;
-	std::function<void(void)> func;
+	bool isOn;
+
 public:
-	Button(const int , const int, const int, const int, const int, const int, std::function<void(void)>);
-	void update();
+	Button() {};
+	Button(const int , const int, const int, const int, const int, const int );
+	void update(bool*);
 	void draw();
 };
+

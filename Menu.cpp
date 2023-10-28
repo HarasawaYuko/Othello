@@ -23,10 +23,11 @@ static       int AI_STR_X;
 static const int AI_STR_Y = AI_SWIPE_Y + (AI_SWIPE_HEIGHT/2) - (AI_STR_SIZE/2);
 
 //開始ボタン関係
-static const int START_BUTTON_X = 320;
-static const int START_BUTTON_Y = 480;
-static const int START_BUTTON_WIDTH = 160;
-static const int START_BUTTON_HEIGHT = 50;
+static const int START_BUTTON_WIDTH = 210;
+static const int START_BUTTON_HEIGHT = 80;
+static const int START_BUTTON_X = WIN_CENT_X - START_BUTTON_WIDTH/2;
+static const int START_BUTTON_Y = 460;
+
 
 //サイドバー関係
 static const int BAR_X = 180;
@@ -73,6 +74,11 @@ void Menu::Initialize() {
 	m_rightSwipeSelectPic = LoadGraph("pic/Othello/rightSwipeSelect.png");
 	m_leftSwipeSelectPic = LoadGraph("pic/Othello/leftSwipeSelect.png");
 
+	//ボタン作成
+	int startPic = LoadGraph("pic/Othello/start.png");
+	int startOnPic = LoadGraph("pic/Othello/startOn.png");
+	startButton = Button( startPic, startOnPic,START_BUTTON_X , START_BUTTON_Y , START_BUTTON_WIDTH , START_BUTTON_HEIGHT );
+
 	//音声のロード
 	m_menuSnd = LoadSoundMem("sound/Othello/menu.mp3");
 	m_startSnd = LoadSoundMem("sound/Othello/start.mp3");
@@ -107,14 +113,14 @@ void Menu::Update() {
 	//手番選択用ラジオボタン
 	int radioFirstX = TURN_RADIO_X - TURN_RADIO_SIZE;
 	int radioFirstY = TURN_RADIO_Y - TURN_RADIO_SIZE;
-	if (Share::isIn(radioFirstX , radioFirstY , TURN_RADIO_SIZE*2 , TURN_RADIO_SIZE * 2)) {
+	if (isIn(radioFirstX , radioFirstY , TURN_RADIO_SIZE*2 , TURN_RADIO_SIZE * 2)) {
 		if (Mouse::instance()->getClickNow(clickCode::LEFT_CLICK)) {
 			Share::playerColor = BLACK;
 			nowRadio = true;
 		}
 		onRadioBlack = true;
 	}
-	if (Share::isIn(radioFirstX + TURN_RADIO_SPACE, radioFirstY, TURN_RADIO_SIZE * 2, TURN_RADIO_SIZE * 2)) {
+	if (isIn(radioFirstX + TURN_RADIO_SPACE, radioFirstY, TURN_RADIO_SIZE * 2, TURN_RADIO_SIZE * 2)) {
 		if (Mouse::instance()->getClickNow(clickCode::LEFT_CLICK)) {
 			Share::playerColor = WHITE;
 			nowRadio = true;
@@ -123,7 +129,7 @@ void Menu::Update() {
 	}
 
 	//AI選択用スワイプボタン
-	if (Share::isIn(AI_SWIPE_X , AI_SWIPE_Y , AI_SWIPE_WIDTH  , AI_SWIPE_HEIGHT)) {
+	if (isIn(AI_SWIPE_X , AI_SWIPE_Y , AI_SWIPE_WIDTH  , AI_SWIPE_HEIGHT)) {
 		onSwipeLeft = true;
 		if (Mouse::instance()->getClickNow(clickCode::LEFT_CLICK)) {
 			AI_INDEX--;
@@ -131,7 +137,7 @@ void Menu::Update() {
 			nowSwipe = true;
 		}
 	}
-	if (Share::isIn(AI_SWIPE_X + AI_SWIPE_SPACE, AI_SWIPE_Y, AI_SWIPE_WIDTH, AI_SWIPE_HEIGHT)) {
+	if (isIn(AI_SWIPE_X + AI_SWIPE_SPACE, AI_SWIPE_Y, AI_SWIPE_WIDTH, AI_SWIPE_HEIGHT)) {
 		onSwipeRight = true;
 		if (Mouse::instance()->getClickNow(clickCode::LEFT_CLICK)) {
 			AI_INDEX = (AI_INDEX + 1) % AI_NUM;
@@ -144,7 +150,7 @@ void Menu::Update() {
 	//レベルの設定
 	m_level = Share::level;
 	Share::level = (m_bar_select_x - BAR_X) / (BAR_WIDTH / AI_LEVEL_MAX[AI_INDEX]) + 1;
-	if (Share::isIn(BAR_X , BAR_Y - BAR_SELECT_SIZE , BAR_WIDTH , BAR_HEIGHT + BAR_SELECT_SIZE *2)) {
+	if (isIn(BAR_X , BAR_Y - BAR_SELECT_SIZE , BAR_WIDTH , BAR_HEIGHT + BAR_SELECT_SIZE *2)) {
 		onSideBar = true;
 		if (Mouse::instance()->getClick(LEFT_CLICK)) {
 			m_bar_select_x = Mouse::instance()->getX();
@@ -155,15 +161,23 @@ void Menu::Update() {
 	}
 
 	//開始ボタン
-	if (Share::isIn(START_BUTTON_X , START_BUTTON_Y , START_BUTTON_WIDTH , START_BUTTON_HEIGHT)) {
-		if (Mouse::instance()->getClickNow(LEFT_CLICK)) {
-			m_sceneChanger->ChangeScene(Scene_Game);
-			nowStart = true;
-		}
-		onStartButton = true;
+	//if (isIn(START_BUTTON_X , START_BUTTON_Y , START_BUTTON_WIDTH , START_BUTTON_HEIGHT)) {
+	//	if (Mouse::instance()->getClickNow(LEFT_CLICK)) {
+	//		m_sceneChanger->ChangeScene(Scene_Game);
+	//		nowStart = true;
+	//	}
+	//	onStartButton = true;
+	//}
+	bool click;
+	startButton.update(&click);
+	if (click) {
+		m_sceneChanger->ChangeScene(Scene_Game);
+		nowStart = true;
 	}
+
+
 	//閉じるボタン
-	if (Share::isIn(CLOSE_X, CLOSE_Y, CLOSE_X + CLOSE_WIDTH, CLOSE_Y + CLOSE_HEIGHT)) {
+	if (isIn(CLOSE_X, CLOSE_Y, CLOSE_X + CLOSE_WIDTH, CLOSE_Y + CLOSE_HEIGHT)) {
 		onClose = true;
 		if (Mouse::instance()->getClickNow(LEFT_CLICK)) {
 			m_sceneChanger->ChangeScene(Scene_Fin);
@@ -225,14 +239,15 @@ void Menu::Draw() {
 	DrawFormatString(BAR_X + BAR_WIDTH + 20, BAR_Y - 8, GetColor(20, 20, 20), "LEVEL:");
 
 	//開始ボタン
-	SetFontSize(35);
+	/*SetFontSize(35);
 	DrawBoxAA(START_BUTTON_X, START_BUTTON_Y, START_BUTTON_X + START_BUTTON_WIDTH, START_BUTTON_Y + START_BUTTON_HEIGHT, GetColor(10, 70, 150), true);
 	width = GetDrawStringWidth("START", 5);
 	int center_x = START_BUTTON_X + START_BUTTON_WIDTH / 2;
 	DrawString(center_x - width / 2, START_BUTTON_Y + 5, "START", GetColor(230, 230, 230));
 	if (onStartButton) {
 		DrawBoxAA(START_BUTTON_X, START_BUTTON_Y, START_BUTTON_X + START_BUTTON_WIDTH, START_BUTTON_Y + START_BUTTON_HEIGHT, GetColor(101, 187, 233), false, 5.0);
-	}
+	}*/
+	startButton.draw();
 
 	//閉じるボタン
 	DrawExtendGraph(CLOSE_X, CLOSE_Y, CLOSE_X + CLOSE_WIDTH, CLOSE_Y + CLOSE_HEIGHT, m_closeButtonPic, true);

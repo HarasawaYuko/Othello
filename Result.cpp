@@ -1,5 +1,6 @@
 #include "Result.h"
 #include "Share.h"
+#include "UIMaterial.h"
 
 /**定数**/
 //AI表示
@@ -127,7 +128,7 @@ void Result::Update() {
 
 
 	//次へボタン
-	if (Share::isIn(BUTTON_X , NEXT_Y , BUTTON_WIDTH , BUTTON_HEIGHT , mousePosX , mousePosY)) {
+	if (isIn(BUTTON_X , NEXT_Y , BUTTON_WIDTH , BUTTON_HEIGHT)) {
 		onNext = true;
 		//クリックされたら
 		if (mouseInput & MOUSE_INPUT_LEFT) {
@@ -137,7 +138,7 @@ void Result::Update() {
 	}
 
 	//もう一度ボタン
-	if (Share::isIn(BUTTON_X, RETRY_Y, BUTTON_WIDTH, BUTTON_HEIGHT, mousePosX, mousePosY)) {
+	if (isIn(BUTTON_X, RETRY_Y, BUTTON_WIDTH, BUTTON_HEIGHT)) {
 		onRetry = true;
 		//クリックされたら
 		if (mouseInput & MOUSE_INPUT_LEFT) {
