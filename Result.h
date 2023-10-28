@@ -15,6 +15,14 @@ private:
 	int m_nextSnd;
 	int m_retrySnd;
 
+	//•`‰æ—p•Ï”
+	static bool onNext;
+	static bool onRetry;
+
+	//‰¹º”»’è—p
+	static bool nowNext;
+	static bool nowRetry;
+
 public:
 	//ŠÖ”
 	void deleteMem();

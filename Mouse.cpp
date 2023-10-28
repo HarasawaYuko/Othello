@@ -1,10 +1,12 @@
 #include "Mouse.h"
 
+//シングルトンへのアクセスを返す
 Mouse* Mouse::instance() {
 	static Mouse instance;
 	return &instance;
 }
 
+//マウス情報の更新
 void Mouse::update() {
 	//マウス位置の取得
 	GetMousePoint(&posX , &posY);
@@ -19,10 +21,12 @@ void Mouse::update() {
 	}
 }
 
+//クリックされているかを取得
 bool Mouse::getClick(clickCode code) {
 	return mouseInput[code] > 0;
 }
 
+//今クリックされた瞬間かを取得
 bool Mouse::getClickNow(clickCode code) {
 	return mouseInput[code] == 1;
 }

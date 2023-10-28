@@ -1,15 +1,11 @@
 #include "AiMcts.h"
 
-namespace {
-	const int serchTime = 10000;
-}
-
 uint64_t mctsActionOthello(const State &state , const int playoutNum) {
-	//	合法手が一つだけの時はそのまま
+	//	合法手が一つだけの時は即決
 	if (state.legalAction().size() == 1) {
 		return state.legalAction()[0];
 	}
-	
+	//ルートノードを作成
 	MctsNode root = MctsNode(state);
 	//選択対象の合法手を列挙
 	root.expand();
@@ -23,7 +19,7 @@ uint64_t mctsActionOthello(const State &state , const int playoutNum) {
 	int best_index = -1;
 	for (int i = 0; i < legal_actions.size(); i++) {
 		int n = root.child_nodes[i].n;
-		if (n>best_num) {
+		if (n > best_num) {
 			best_num = n;
 			best_index = i;
 		}

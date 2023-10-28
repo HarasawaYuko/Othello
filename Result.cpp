@@ -43,14 +43,6 @@ static const int BUTTON_LETTER_Y = (BUTTON_HEIGHT/2) - BUTTON_LETTER_SIZE/2;
 //色
 static const unsigned int COLOR_BLUE = GetColor(0 ,10 ,140);
 
-/**描画用変数**/
-static bool onNext;
-static bool onRetry;
-
-/**音声判定用**/
-static bool nowNext;
-static bool nowRetry;
-
 //コンストラクタ
 Result::Result(SceneChanger *changer) 
 	:BaseScene(changer)

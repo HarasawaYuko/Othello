@@ -3,7 +3,7 @@
 #include "Share.h"
 
 
-/////定数
+//定数
 //ウィンドウの初期位置
 #define WIN_POS_X 0
 #define WIN_POS_Y 0
@@ -18,8 +18,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return -1;
     }
     //描画先を裏画面にする
-    SetWindowText("OTELLO");
     SetDrawScreen(DX_SCREEN_BACK);
+    //画面等の設定
+    SetWindowText("OTELLO");
     SetGraphMode(WIN_SIZE_X , WIN_SIZE_Y , 32);
     SetWindowInitPosition(WIN_POS_X , WIN_POS_Y);
     SetBackgroundColor(255 , 255 , 255);
@@ -28,11 +29,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     //xボタンで終了しない
     SetWindowUserCloseEnableFlag(false);
-
     SetWaitVSyncFlag(0);
 
+    SceneMgr sceneMgr;//シーン管理クラス
+
     //初期化
-    SceneMgr sceneMgr;
     sceneMgr.Initialize();
     Share::Share_Initialize();
 

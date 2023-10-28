@@ -1,9 +1,7 @@
 #include "MctsNode.h"
 
-namespace {
-	const int EXPAND_THRESHOLD = 10;
-	const double C = 1.0;
-}
+static const int EXPAND_THRESHOLD = 10;//ƒm[ƒh“WŠJ‚Ìè‡’l
+static const double C = 1.0;//ƒm[ƒh‘I‘ð—p’è”
 
 MctsNode::MctsNode(const State& state)
 	:state(state), w(0), n(0)
@@ -47,15 +45,8 @@ double MctsNode::evaluate() {
 	//Žqƒm[ƒh‚ª‘¶Ý‚·‚éê‡
 	else {
 		//ŽŸ‚Ìƒm[ƒh‚ð‘I‘ð‚µA•]‰¿’l‚ð‰ÁŽZ
-		//ŽŸ‚Ìƒm[ƒh‚È‚Ì‚ÅŽ‹“_”½“]
-
-		//double value = 1. - this->nextChildNode().evaluate();
-		MctsNode& nextnode = this->nextChildNode();
-		if (nextnode.child_nodes.empty()) {
-			int a = 3;
-		}
-		double result = nextnode.evaluate();
-		double value = 1. - result;
+		//“G‚Ìƒm[ƒh‚È‚Ì‚ÅŽ‹“_”½“]
+		double value = 1. - this->nextChildNode().evaluate();
 		this->w += value;
 		this->n++;
 		return value;
@@ -64,16 +55,10 @@ double MctsNode::evaluate() {
 
 //ƒm[ƒh‚Ì“WŠJ
 void MctsNode::expand() {
+	//‡–@Žè‚ðŽæ“¾
 	auto legalActions = this->state.legalAction();
-	/*for (const auto action : legalActions) {
-		othelloNode tmp = othelloNode(this->state);
-		tmp.state.advance(action);
-		this->child_nodes.push_back(tmp);
-		
-	}*/
-
-
 	for (const auto action:legalActions) {
+		//Žqƒm[ƒh‚ð’Ç‰Á
 		this->child_nodes.emplace_back(this->state);
 		this->child_nodes.back().state.advance(action);
 	}
@@ -85,9 +70,6 @@ MctsNode& MctsNode::nextChildNode() {
 	//ˆê“x‚à‘I‘ð‚³‚ê‚Ä‚¢‚È‚¢ƒm[ƒh‚ª‚ ‚ê‚Î‘¦Œˆ
 	for (auto& child_node : this->child_nodes) {
 		if (child_node.n == 0) {
-			if (child_node.child_nodes.empty()) {
-				int a = 3;
-			}
 			return child_node;
 		}
 	}
@@ -107,9 +89,6 @@ MctsNode& MctsNode::nextChildNode() {
 			best_index = i;
 			best_value = ucb1;
 		}
-	}
-	if (this->child_nodes[best_index].child_nodes.empty()) {
-		int a = 2;
 	}
 	return this->child_nodes[best_index];
 }

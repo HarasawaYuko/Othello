@@ -2,6 +2,8 @@
 #include "include.h"
 #include <chrono>
 
+//ŠÔ‚ğŠÇ—‚·‚éƒNƒ‰ƒX
+
 class TimeKeeper {
 private:
 	std::chrono::high_resolution_clock::time_point startTime;

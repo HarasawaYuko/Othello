@@ -123,7 +123,6 @@ void Game::Update() {
 	else {
 		onBoard = true;
 	}
-	//MouseToCoord(mousePosX, mousePosY, &m_selectCoord);
 	if (!m_state.isDone()) {
 		//ƒvƒŒƒCƒ„[‚Ìè”Ô
 		if (m_state.turn == Share::playerColor) {

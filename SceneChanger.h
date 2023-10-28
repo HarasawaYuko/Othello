@@ -1,5 +1,6 @@
 #pragma once
 
+//ƒV[ƒ“—p—ñ‹“Œ^
 enum Scene{
 	Scene_Menu,
 	Scene_Game,

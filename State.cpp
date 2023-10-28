@@ -4,7 +4,7 @@
 //ベクトル
 static const int SHIFT[] = { 1 , 7 , 8 , 9 };
 
-
+//アルファベータ法用の評価値
 static constexpr int EVAL[64] =
 {
 	40 , -1  , 10 , 5 , 5 , 10 ,  -1 , 40,
@@ -23,7 +23,7 @@ static const uint64_t UNDER_F = 0b11111111'11111111'11111111'11111111'11111111'1
 static const uint64_t RIGHT_F = 0b11111110'11111110'11111110'11111110'11111110'11111110'11111110'11111110;
 static const uint64_t LEFT_F  = 0b01111111'01111111'01111111'01111111'01111111'01111111'01111111'01111111;
 
-//シフトごと
+//各シフト演算ごとのビットマスク
 static const uint64_t MASK_RIGHT[] = {LEFT_F , RIGHT_F , TOP_F , LEFT_F};
 static const uint64_t MASK_LEFT[] = {RIGHT_F , LEFT_F , UNDER_F , RIGHT_F };
 
@@ -38,7 +38,7 @@ State::State() {
 }
 
 uint64_t State::getLegalBoard() const{
-	uint64_t enemy_board = all_board xor my_board;
+	uint64_t enemy_board = all_board xor my_board;//敵の置いている位置
 	uint64_t result = ALL_F;
 	uint64_t unput = ~all_board;//置いてないマス
 

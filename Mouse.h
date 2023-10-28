@@ -13,8 +13,10 @@ enum clickCode {
 
 class Mouse {
 private:
+	//位置
 	int posX = 0;
 	int posY = 0;
+	//クリック状態
 	int mouseInput[INPUT_NUM] = {};
 	//コンストラクタ、代入演算子をprivateに
 	Mouse() {};

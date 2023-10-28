@@ -1,5 +1,6 @@
 #include "Menu.h"
 #include "Share.h"
+#include "Mouse.h"
 
 //ターン選択ラジオボタン関係
 static const int TURN_RADIO_Y = 250;
@@ -9,7 +10,7 @@ static const int TURN_RADIO_SELECT_SIZE = 13;
 static const int TURN_RADIO_SPACE = 210;
 
 //Ai選択スワイプボタン関係
-static const int AI_LEVEL_MAX[] = { 10 , 10 };
+static const int AI_LEVEL_MAX[] = { 10 , 7 };
 static       int AI_INDEX = 0;
 static const int AI_NUM = 2;
 static const int AI_SWIPE_Y = 310;
@@ -48,21 +49,6 @@ static const unsigned int COLOR_LBLUE = GetColor(101, 187, 233);
 static const unsigned int COLOR_CANPUT = GetColor(0xFF, 0x99, 0x33);
 static const unsigned int COLOR_SELECT = GetColor(0x00, 0x33, 0xCC);
 static const unsigned int COLOR_RED = GetColor(220, 45, 35);
-
-//描画判定用
-static bool onStartButton;
-static bool onRadioBlack;
-static bool onRadioWhite;
-static bool onSideBar;
-static bool onClose;
-static bool onSwipeRight;
-static bool onSwipeLeft;
-
-//音声判定用変数
-static bool nowStart;
-static bool nowRadio;
-static bool nowSide;
-static bool nowSwipe;
 
 Menu::Menu(SceneChanger *changer) 
 	:BaseScene(changer),

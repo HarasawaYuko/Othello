@@ -3,10 +3,11 @@
 #include "Task.h"
 #include "SceneChanger.h"
 
-
+//シーンの基底クラス
 
 class BaseScene : public Task {
 protected:
+	//シーン変更用
 	SceneChanger* m_sceneChanger;
 
 public:
