@@ -34,3 +34,39 @@ void Button::draw() {
 		DrawExtendGraph(x, y, x + width, y + height, pic, true);
 	}
 }
+
+RadioButton::RadioButton(const int x , const int y ,const int size , const int space, const int num ,const int font ,const std::vector<std::string> strs)
+	:x(x) , y(y) ,size(size),space(space), num(num), on(-1), fontsize(font), strs(strs)
+{}
+
+void RadioButton::update(bool* click) {
+	*click = false;
+	on = -1;
+	for (int i = 0; i < num; i++) {
+		if (isIn(x + space * i, y, size * 2, size * 2)) {
+			on = i;
+			if (Mouse::instance()->getClickNow(LEFT_CLICK)) {
+				select = i;
+				*click = true;
+			}
+		}
+	}
+}
+
+void RadioButton::draw() const{
+	SetFontSize(fontsize);
+	//numåJÇËï‘Çµ
+	for (int i = 0; i < num; i++) {
+		DrawCircleAA(x + size + i*space , y + size, size, 20, COLOR_WHITE, true);
+		DrawString(x + size*2 + i*space + 10, y , strs[i].c_str(),COLOR_BlACK );
+	}
+	if (on >= 0) {
+		DrawCircleAA(x + size + on * space, y + size, size, 20, COLOR_LBLUE , false , 5.0f);
+	}
+	//ëIëâ”èäï\é¶
+	DrawCircleAA(x + size + select * space, y + size, size * 0.7, 20, COLOR_BLUE, true);
+}
+
+int RadioButton::getSelect() const {
+	return select;
+}

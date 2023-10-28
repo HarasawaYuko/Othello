@@ -19,6 +19,11 @@ private:
 	int m_rightSwipeSelectPic;
 	int m_leftSwipeSelectPic;
 
+	int m_startPic;
+	int m_startOnPic;
+	int m_closePic;
+	int m_closeOnPic;
+
 	//音声ハンドル
 	int m_menuSnd;
 	int m_startSnd;
@@ -27,7 +32,7 @@ private:
 	int m_swipeSnd;
 
 	//描画判定用
-	bool onStartButton;
+	//bool onStartButton;
 	bool onRadioBlack;
 	bool onRadioWhite;
 	bool onSideBar;
@@ -35,13 +40,18 @@ private:
 	bool onSwipeRight;
 	bool onSwipeLeft;
 
-	//音声判定用変数
+	//入力判定用変数
 	bool nowStart;
 	bool nowRadio;
 	bool nowSide;
 	bool nowSwipe;
+	bool nowClose;
 
 	Button startButton;
+	Button closeButton;
+	Button swipeLeftButton;
+	Button swipeRightButton;
+	RadioButton turnButton;
 
 	//描画用
 	int m_bar_select_x;

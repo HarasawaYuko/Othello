@@ -3,24 +3,26 @@
 #include "Mouse.h"
 
 //ターン選択ラジオボタン関係
-static const int TURN_RADIO_Y = 250;
-static const int TURN_RADIO_X = 220;
+static const int TURN_RADIO_Y = 230;
+static const int TURN_RADIO_X = 200;
 static const int TURN_RADIO_SIZE = 20;
 static const int TURN_RADIO_SELECT_SIZE = 13;
 static const int TURN_RADIO_SPACE = 210;
 
-//Ai選択スワイプボタン関係
+//AI関係
 static const int AI_LEVEL_MAX[] = { 10 , 7 };
 static       int AI_INDEX = 0;
 static const int AI_NUM = 2;
-static const int AI_SWIPE_Y = 310;
-static const int AI_SWIPE_X = 200;
-static const int AI_SWIPE_WIDTH = 65;
-static const int AI_SWIPE_HEIGHT = 65;
-static const int AI_SWIPE_SPACE = 400 - AI_SWIPE_WIDTH;
+
+//Ai選択スワイプボタン関係
+static const int SWIPE_Y = 310;
+static const int SWIPE_X = 200;
+static const int SWIPE_WIDTH = 65;
+static const int SWIPE_HEIGHT = 65;
+static const int SWIPE_SPACE = 400 - SWIPE_WIDTH;
 static const int AI_STR_SIZE = 40;
 static       int AI_STR_X;
-static const int AI_STR_Y = AI_SWIPE_Y + (AI_SWIPE_HEIGHT/2) - (AI_STR_SIZE/2);
+static const int AI_STR_Y = SWIPE_Y + (SWIPE_HEIGHT/2) - (AI_STR_SIZE/2);
 
 //開始ボタン関係
 static const int START_BUTTON_WIDTH = 210;
@@ -44,11 +46,6 @@ static const int CLOSE_WIDTH = 60;
 static const int CLOSE_HEIGHT = 45;
 
 //色
-const unsigned int COLOR_BOARD = GetColor(0x10, 0xB5, 0x67);
-static const unsigned int COLOR_BLUE = GetColor(0, 10, 140);
-static const unsigned int COLOR_LBLUE = GetColor(101, 187, 233);
-static const unsigned int COLOR_CANPUT = GetColor(0xFF, 0x99, 0x33);
-static const unsigned int COLOR_SELECT = GetColor(0x00, 0x33, 0xCC);
 static const unsigned int COLOR_RED = GetColor(220, 45, 35);
 
 Menu::Menu(SceneChanger *changer) 
@@ -73,11 +70,18 @@ void Menu::Initialize() {
 	m_leftSwipePic = LoadGraph("pic/Othello/leftSwipe.png");
 	m_rightSwipeSelectPic = LoadGraph("pic/Othello/rightSwipeSelect.png");
 	m_leftSwipeSelectPic = LoadGraph("pic/Othello/leftSwipeSelect.png");
+	m_startPic = LoadGraph("pic/Othello/start.png");
+	m_startOnPic = LoadGraph("pic/Othello/startOn.png");
+	m_closePic = LoadGraph("pic/Othello/fin.png");
+	m_closeOnPic = LoadGraph("pic/Othello/finOn.png");
+
 
 	//ボタン作成
-	int startPic = LoadGraph("pic/Othello/start.png");
-	int startOnPic = LoadGraph("pic/Othello/startOn.png");
-	startButton = Button( startPic, startOnPic,START_BUTTON_X , START_BUTTON_Y , START_BUTTON_WIDTH , START_BUTTON_HEIGHT );
+	startButton = Button( m_startPic, m_startOnPic,START_BUTTON_X , START_BUTTON_Y , START_BUTTON_WIDTH , START_BUTTON_HEIGHT );
+	closeButton = Button(m_closePic, m_closeOnPic, CLOSE_X, CLOSE_Y, CLOSE_WIDTH, CLOSE_HEIGHT);
+	swipeLeftButton = Button(m_leftSwipePic , m_leftSwipeSelectPic , SWIPE_X ,SWIPE_Y , SWIPE_WIDTH , SWIPE_HEIGHT);
+	swipeRightButton = Button(m_rightSwipePic, m_rightSwipeSelectPic, SWIPE_X + SWIPE_SPACE, SWIPE_Y, SWIPE_WIDTH, SWIPE_HEIGHT);
+	turnButton = RadioButton(TURN_RADIO_X, TURN_RADIO_Y, TURN_RADIO_SIZE,TURN_RADIO_SPACE, 2, 35, {"BLACK" ,"WHITE"});
 
 	//音声のロード
 	m_menuSnd = LoadSoundMem("sound/Othello/menu.mp3");
@@ -98,7 +102,6 @@ void Menu::Update() {
 	onClose = false;
 	onRadioBlack = false;
 	onRadioWhite = false;
-	onStartButton = false;
 	onSideBar = false;
 	onSwipeLeft = false;
 	onSwipeRight = false;
@@ -106,45 +109,28 @@ void Menu::Update() {
 	nowRadio = false;
 	nowSide = false;
 	nowSwipe = false;
+	nowClose = false;
 
 	//マウス位置の取得
 	Mouse::instance()->update();
 
-	//手番選択用ラジオボタン
-	int radioFirstX = TURN_RADIO_X - TURN_RADIO_SIZE;
-	int radioFirstY = TURN_RADIO_Y - TURN_RADIO_SIZE;
-	if (isIn(radioFirstX , radioFirstY , TURN_RADIO_SIZE*2 , TURN_RADIO_SIZE * 2)) {
-		if (Mouse::instance()->getClickNow(clickCode::LEFT_CLICK)) {
-			Share::playerColor = BLACK;
-			nowRadio = true;
-		}
-		onRadioBlack = true;
-	}
-	if (isIn(radioFirstX + TURN_RADIO_SPACE, radioFirstY, TURN_RADIO_SIZE * 2, TURN_RADIO_SIZE * 2)) {
-		if (Mouse::instance()->getClickNow(clickCode::LEFT_CLICK)) {
-			Share::playerColor = WHITE;
-			nowRadio = true;
-		}
-		onRadioWhite = true;
+	turnButton.update(&nowRadio);
+	if (nowRadio) {
+		Share::playerColor = (piece)turnButton.getSelect();
 	}
 
 	//AI選択用スワイプボタン
-	if (isIn(AI_SWIPE_X , AI_SWIPE_Y , AI_SWIPE_WIDTH  , AI_SWIPE_HEIGHT)) {
-		onSwipeLeft = true;
-		if (Mouse::instance()->getClickNow(clickCode::LEFT_CLICK)) {
-			AI_INDEX--;
-			if (AI_INDEX < 0) AI_INDEX = AI_NUM - 1;
-			nowSwipe = true;
-		}
+	swipeLeftButton.update(&nowSwipe);
+	if (nowSwipe) {
+		AI_INDEX--;
+		if (AI_INDEX < 0) AI_INDEX = AI_NUM - 1;
 	}
-	if (isIn(AI_SWIPE_X + AI_SWIPE_SPACE, AI_SWIPE_Y, AI_SWIPE_WIDTH, AI_SWIPE_HEIGHT)) {
-		onSwipeRight = true;
-		if (Mouse::instance()->getClickNow(clickCode::LEFT_CLICK)) {
+	else{
+		swipeRightButton.update(&nowSwipe);
+		if (nowSwipe) {
 			AI_INDEX = (AI_INDEX + 1) % AI_NUM;
-			nowSwipe = true;
 		}
 	}
-	
 
 	//サイドバー
 	//レベルの設定
@@ -161,66 +147,27 @@ void Menu::Update() {
 	}
 
 	//開始ボタン
-	//if (isIn(START_BUTTON_X , START_BUTTON_Y , START_BUTTON_WIDTH , START_BUTTON_HEIGHT)) {
-	//	if (Mouse::instance()->getClickNow(LEFT_CLICK)) {
-	//		m_sceneChanger->ChangeScene(Scene_Game);
-	//		nowStart = true;
-	//	}
-	//	onStartButton = true;
-	//}
-	bool click;
-	startButton.update(&click);
-	if (click) {
+	startButton.update(&nowStart);
+	if (nowStart) {
 		m_sceneChanger->ChangeScene(Scene_Game);
-		nowStart = true;
 	}
 
-
 	//閉じるボタン
-	if (isIn(CLOSE_X, CLOSE_Y, CLOSE_X + CLOSE_WIDTH, CLOSE_Y + CLOSE_HEIGHT)) {
-		onClose = true;
-		if (Mouse::instance()->getClickNow(LEFT_CLICK)) {
-			m_sceneChanger->ChangeScene(Scene_Fin);
-		}
+	closeButton.update(&nowClose);
+	if (nowClose) {
+		m_sceneChanger->ChangeScene(Scene_Fin);
 	}
 }
 
 void Menu::Draw() {
-	//手番選択用ラジオボタン
-	SetFontSize(35);
 	DrawExtendGraph(0, 0, WIN_SIZE_X, WIN_SIZE_Y, m_titlePic, true);
-	DrawCircleAA(TURN_RADIO_X, TURN_RADIO_Y, TURN_RADIO_SIZE, 20, GetColor(230, 230, 230), true);
-	DrawString(TURN_RADIO_X + 25, TURN_RADIO_Y - TURN_RADIO_SIZE, "BLACK", GetColor(20, 20, 20));
-	DrawCircleAA(TURN_RADIO_X + TURN_RADIO_SPACE, TURN_RADIO_Y, TURN_RADIO_SIZE, 20, GetColor(230, 230, 230), true);
-	DrawString(TURN_RADIO_X + TURN_RADIO_SPACE + 25, TURN_RADIO_Y - TURN_RADIO_SIZE, "WHITE", GetColor(20, 20, 20));
-	//選択表示
-	if (Share::playerColor == BLACK) {
-		DrawCircleAA(TURN_RADIO_X, TURN_RADIO_Y, TURN_RADIO_SELECT_SIZE, 20, GetColor(10, 70, 150), true, 2);
-	}
-	else {
-		DrawCircleAA(TURN_RADIO_X + TURN_RADIO_SPACE, TURN_RADIO_Y, TURN_RADIO_SELECT_SIZE, 20, GetColor(10, 70, 150), true, 2);
-	}
-	//マウス表示
-	if (onRadioBlack) {
-		DrawCircleAA(TURN_RADIO_X, TURN_RADIO_Y, TURN_RADIO_SIZE, 20, GetColor(101, 187, 233), false, 5);
-	}
-	else if (onRadioWhite) {
-		DrawCircleAA(TURN_RADIO_X + TURN_RADIO_SPACE, TURN_RADIO_Y, TURN_RADIO_SIZE, 20, GetColor(101, 187, 233), false, 5);
-	}
+	//手番選択用ラジオボタン
+	turnButton.draw();
 
 	//AI選択表示
-	if (onSwipeLeft) {
-		DrawExtendGraph(AI_SWIPE_X, AI_SWIPE_Y, AI_SWIPE_X + AI_SWIPE_WIDTH, AI_SWIPE_Y + AI_SWIPE_HEIGHT, m_leftSwipeSelectPic, true);
-	}
-	else {
-		DrawExtendGraph(AI_SWIPE_X, AI_SWIPE_Y, AI_SWIPE_X + AI_SWIPE_WIDTH, AI_SWIPE_Y + AI_SWIPE_HEIGHT, m_leftSwipePic, true);
-	}
-	if (onSwipeRight) {
-		DrawExtendGraph(AI_SWIPE_X + AI_SWIPE_SPACE, AI_SWIPE_Y, AI_SWIPE_X + AI_SWIPE_WIDTH + AI_SWIPE_SPACE , AI_SWIPE_Y + AI_SWIPE_HEIGHT, m_rightSwipeSelectPic, true);
-	}
-	else {
-		DrawExtendGraph(AI_SWIPE_X + AI_SWIPE_SPACE, AI_SWIPE_Y, AI_SWIPE_X + AI_SWIPE_WIDTH + AI_SWIPE_SPACE, AI_SWIPE_Y + AI_SWIPE_HEIGHT, m_rightSwipePic, true);
-	}
+	swipeLeftButton.draw();
+	swipeRightButton.draw();
+
 	SetFontSize(AI_STR_SIZE);
 	int width = GetDrawStringWidth(Share::AI[AI_INDEX].c_str() , Share::AI[AI_INDEX].size());
 	AI_STR_X = WIN_SIZE_X / 2 - width / 2;
@@ -239,21 +186,10 @@ void Menu::Draw() {
 	DrawFormatString(BAR_X + BAR_WIDTH + 20, BAR_Y - 8, GetColor(20, 20, 20), "LEVEL:");
 
 	//開始ボタン
-	/*SetFontSize(35);
-	DrawBoxAA(START_BUTTON_X, START_BUTTON_Y, START_BUTTON_X + START_BUTTON_WIDTH, START_BUTTON_Y + START_BUTTON_HEIGHT, GetColor(10, 70, 150), true);
-	width = GetDrawStringWidth("START", 5);
-	int center_x = START_BUTTON_X + START_BUTTON_WIDTH / 2;
-	DrawString(center_x - width / 2, START_BUTTON_Y + 5, "START", GetColor(230, 230, 230));
-	if (onStartButton) {
-		DrawBoxAA(START_BUTTON_X, START_BUTTON_Y, START_BUTTON_X + START_BUTTON_WIDTH, START_BUTTON_Y + START_BUTTON_HEIGHT, GetColor(101, 187, 233), false, 5.0);
-	}*/
 	startButton.draw();
 
 	//閉じるボタン
-	DrawExtendGraph(CLOSE_X, CLOSE_Y, CLOSE_X + CLOSE_WIDTH, CLOSE_Y + CLOSE_HEIGHT, m_closeButtonPic, true);
-	if (onClose) {
-		DrawExtendGraph(CLOSE_X, CLOSE_Y, CLOSE_X + CLOSE_WIDTH, CLOSE_Y + CLOSE_HEIGHT, m_closeFramePic, true);
-	}
+	closeButton.draw();
 
 	//音声
 	if (nowRadio) {
