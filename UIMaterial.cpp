@@ -72,14 +72,14 @@ void RadioButton::draw() const{
 	SetFontSize(fontsize);
 	//numåJÇËï‘Çµ
 	for (int i = 0; i < num; i++) {
-		DrawCircleAA(x + size + i*space , y + size, size, 20, COLOR_WHITE, true);
+		DrawCircleAA((float)(x + size + i*space) , (float)(y + size), (float)size, 20, COLOR_WHITE, true);
 		DrawString(x + size*2 + i*space + 10, y , strs[i].c_str(),COLOR_BlACK );
 	}
 	if (on >= 0) {
-		DrawCircleAA(x + size + on * space, y + size, size, 20, COLOR_LBLUE , false , 5.0f);
+		DrawCircleAA((float)(x + size + on * space), (float)(y + size) , (float)(size, 20), COLOR_LBLUE , false , 5);
 	}
 	//ëIëâ”èäï\é¶
-	DrawCircleAA(x + size + select * space, y + size, size * 0.7, 20, COLOR_BLUE, true);
+	DrawCircleAA((float)(x + size + select * space),(float)( y + size), (float)(size * 0.7), 20, COLOR_BLUE, true);
 }
 
 int RadioButton::getSelect() const {

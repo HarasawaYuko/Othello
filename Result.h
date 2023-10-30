@@ -21,10 +21,6 @@ private:
 	int m_nextSnd;
 	int m_retrySnd;
 
-	//•`‰æ—p•Ï”
-	bool onNext;
-	bool onRetry;
-
 	//‰¹º”»’è—p
 	bool nowNext;
 	bool nowRetry;

@@ -73,43 +73,43 @@ void Result::Initialize() {
 
 	//AI表示位置
 	SetFontSize(AI_LETTER_SIZE);
-	AI_X = WIN_SIZE_X / 2 - GetDrawStringWidth(Share::AI[(int)Share::ai].c_str() , Share::AI[(int)Share::ai].size())/2;
+	AI_X = WIN_SIZE_X / 2 - GetDrawStringWidth(Share::AI[(int)Share::ai].c_str() , (int)Share::AI[(int)Share::ai].size())/2;
 
 	//結果表示位置計算
 	switch (Share::playerStatus) {
 	case WIN:
-		RESULT_COLOR = GetColor(0xE8, 0x14, 0x14);
+		RESULT_COLOR = COLOR_RED;
 		RESULT_STR = "WIN";
 		break;
 	case LOSE:
-		RESULT_COLOR = GetColor(0x34, 0x21, 0x87);
+		RESULT_COLOR = COLOR_BLUE;
 		RESULT_STR = "LOSE";
 		break;
 	case DRAW:
-		RESULT_COLOR = GetColor(50, 50, 50);
+		RESULT_COLOR = COLOR_BlACK;
 		RESULT_STR = "DRAW";
 		break;
 	case NONE:
-		RESULT_COLOR = GetColor(50, 50, 50);
+		RESULT_COLOR = COLOR_BlACK;
 		RESULT_STR = "DRAW";
 		break;
 	}
 	SetFontSize(RESULT_LETTER_SIZE);
-	RESULT_X = WIN_SIZE_X / 2 - GetDrawStringWidth(RESULT_STR.c_str() , RESULT_STR.size())/2;
+	RESULT_X = WIN_SIZE_X / 2 - GetDrawStringWidth(RESULT_STR.c_str() , (int)RESULT_STR.size())/2;
 
 	//レベル表示位置の計算
 	SetFontSize(LEVEL_STR_LETTER_SIZE);
 	int levelStrWidth = GetDrawStringWidth("LEVEL:", 6);
 	SetFontSize(LEVEL_LETTER_SIZE);
-	int levelWidth = GetDrawStringWidth(std::to_string(Share::level).c_str(), std::to_string(Share::level).size());
+	int levelWidth = GetDrawStringWidth(std::to_string(Share::level).c_str(), (int)std::to_string(Share::level).size());
 	LEVEL_STR_X = WIN_SIZE_X / 2 - (levelStrWidth + levelWidth) / 2;
 	LEVEL_X = LEVEL_STR_X + levelStrWidth + 5;
 	LEVEL_Y = LEVEL_STR_Y - (LEVEL_LETTER_SIZE - LEVEL_STR_LETTER_SIZE) + 2;
 
 	//個数表示位置
 	SetFontSize(NUM_SIZE);
-	int blackWidth = GetDrawStringWidth(std::to_string(Share::blackNum).c_str(), std::to_string(Share::blackNum).size());
-	int whiteWidth = GetDrawStringWidth(std::to_string(Share::whiteNum).c_str(), std::to_string(Share::whiteNum).size());
+	int blackWidth = GetDrawStringWidth(std::to_string(Share::blackNum).c_str(), (int)std::to_string(Share::blackNum).size());
+	int whiteWidth = GetDrawStringWidth(std::to_string(Share::whiteNum).c_str(), (int)std::to_string(Share::whiteNum).size());
 	NUM_X = WIN_SIZE_X / 2 - (blackWidth + whiteWidth + GetDrawStringWidth(" - ", 3)) / 2;
 
 	//ボタン位置の計算
@@ -117,41 +117,22 @@ void Result::Initialize() {
 	NEXT_LETTER_X = (BUTTON_WIDTH / 2) - (GetDrawStringWidth("NEXT", 4) / 2);
 	RETRY_LETTER_X = (BUTTON_WIDTH / 2) - (GetDrawStringWidth("RETRY", 5) / 2);
 
-	//ボタン
+	//ボタンの作成
 	nextButton = Button(nextPic, nextOnPic, BUTTON_X, NEXT_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
 	retryButton = Button(retryPic, retryOnPic, BUTTON_X, RETRY_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
 }
 
 void Result::Update() {
-	//フラグのリセット
-	onNext = false;
-	onRetry = false;
 	//マウス位置の取得
 	Mouse::instance()->update();
 
 	//次へボタン
-	//if (isIn(BUTTON_X , NEXT_Y , BUTTON_WIDTH , BUTTON_HEIGHT)) {
-	//	onNext = true;
-	//	//クリックされたら
-	//	if (mouseInput & MOUSE_INPUT_LEFT) {
-	//		nowNext = true;
-	//		m_sceneChanger->ChangeScene(Scene_Menu);
-	//	}
-	//}
 	nextButton.update(&nowNext);
 	if (nowNext) {
 		m_sceneChanger->ChangeScene(Scene_Menu);
 	}
 
 	//もう一度ボタン
-	//if (isIn(BUTTON_X, RETRY_Y, BUTTON_WIDTH, BUTTON_HEIGHT)) {
-	//	onRetry = true;
-	//	//クリックされたら
-	//	if (mouseInput & MOUSE_INPUT_LEFT) {
-	//		nowRetry = true;
-	//		m_sceneChanger->ChangeScene(Scene_Game);
-	//	}
-	//}
 	retryButton.update(&nowRetry);
 	if (nowRetry) {
 		m_sceneChanger->ChangeScene(Scene_Game);
@@ -159,20 +140,18 @@ void Result::Update() {
 }
 
 void Result::Draw() {
-	int width; //文字列の幅保存用
-
 	//背景の表示
 	DrawExtendGraph(0 , 0 ,WIN_SIZE_X ,WIN_SIZE_Y , m_resultPic , false);
 
 	//レベルの表示
 	SetFontSize(AI_LETTER_SIZE);
-	DrawString(AI_X, AI_Y, Share::AI[(int)Share::ai].c_str(), GetColor(30, 30, 30));
+	DrawString(AI_X, AI_Y, Share::AI[(int)Share::ai].c_str(), COLOR_BlACK);
 
 	//レベルの表示
 	SetFontSize(LEVEL_STR_LETTER_SIZE);
-	DrawString(LEVEL_STR_X ,LEVEL_STR_Y , "LEVEL:" ,GetColor(30 , 30 ,30));
+	DrawString(LEVEL_STR_X ,LEVEL_STR_Y , "LEVEL:" ,COLOR_BlACK);
 	SetFontSize(LEVEL_LETTER_SIZE);
-	DrawFormatString(LEVEL_X , LEVEL_Y , GetColor(30 , 30 ,30) ,"%d" , Share::level);
+	DrawFormatString(LEVEL_X , LEVEL_Y , COLOR_BlACK ,"%d" , Share::level);
 
 	//結果の表示
 	SetFontSize(RESULT_LETTER_SIZE);
@@ -180,25 +159,15 @@ void Result::Draw() {
 
 	//個数表示
 	SetFontSize(NUM_SIZE);
-	DrawFormatString(NUM_X , NUM_Y , GetColor(30 ,30 , 30) , "%d - %d" ,Share::blackNum , Share::whiteNum);
+	DrawFormatString(NUM_X , NUM_Y , COLOR_BlACK, "%d - %d" ,Share::blackNum , Share::whiteNum);
 
 	/** ボタン **/
 	SetFontSize(BUTTON_LETTER_SIZE);
 
 	//次へボタン
-	/*DrawBoxAA(BUTTON_X, NEXT_Y, BUTTON_X + BUTTON_WIDTH, NEXT_Y + BUTTON_HEIGHT, COLOR_BLUE, true);
-	DrawString(BUTTON_X + NEXT_LETTER_X, NEXT_Y + BUTTON_LETTER_Y, "NEXT", GetColor(230, 230, 230));
-	if (onNext) {
-		DrawBoxAA(BUTTON_X, NEXT_Y, BUTTON_X + BUTTON_WIDTH, NEXT_Y + BUTTON_HEIGHT, GetColor(101, 187, 233), false, 5.0);
-	}*/
 	nextButton.draw();
 
 	//もう一度ボタン
-	/*DrawBoxAA(BUTTON_X, RETRY_Y, BUTTON_X + BUTTON_WIDTH, RETRY_Y + BUTTON_HEIGHT, COLOR_BLUE, true);
-	DrawString(BUTTON_X + RETRY_LETTER_X, RETRY_Y + BUTTON_LETTER_Y, "RETRY", GetColor(230, 230, 230));
-	if (onRetry) {
-		DrawBoxAA(BUTTON_X, RETRY_Y, BUTTON_X + BUTTON_WIDTH, RETRY_Y + BUTTON_HEIGHT, GetColor(101, 187, 233), false, 5.0);
-	}*/
 	retryButton.draw();
 }
 
@@ -219,7 +188,12 @@ void Result::Finalize() {
 }
 
 void Result::deleteMem() {
+	DeleteGraph(retryPic);
+	DeleteGraph(retryOnPic);
+	DeleteGraph(nextPic);
+	DeleteGraph(nextOnPic);
 	DeleteGraph(m_resultPic);
+
 	DeleteSoundMem(m_resultSnd);
 	DeleteSoundMem(m_nextSnd);
 	DeleteSoundMem(m_retrySnd);

@@ -12,7 +12,6 @@ static const int TOP_MARGIN = 50;//上側マージン
 static const int SIDE_MARGIN = 150;//横マージン
 static const int SQUARE_SIZE = 62;//マスの大きさ
 static const int PLAYOUT_NUM_LEVEL = 10000;//1レベルごとのプレイアウト
-static const int THINK_TIME = 1;//AIの思考時間
 static const int UNDO_NUM = 3;//undoできる数
 static const int TO_RESULT_TIME = 10;
 
@@ -35,14 +34,13 @@ static const int STOP_Y = 10;
 static const int STOP_WIDTH = 60;
 static const int STOP_HEIGHT = 45;
 
-
-static const unsigned int COLOR_RED = GetColor(220, 45, 35);
+//勝敗表示文字幅
+static const int WIN_WIDTH = GetDrawStringWidth("WIN!", 4);
+static const int LOSE_WIDTH = GetDrawStringWidth("LOSE", 4);
 
 
 //描画判定用
 static bool onBoard;
-static bool onUndo;
-static bool onStop;
 
 //音声判定用
 static bool nowPut;
@@ -112,11 +110,11 @@ void Game::Update() {
 	nowPut = false;
 	nowPass = false;
 	nowUndo = false;
-	onUndo = false;
-	onStop = false;
+
 	//マウス位置の取得
 	Mouse::instance()->update();
 
+	//ボード上にマウスがあるか取得
 	setSelectSquare(Mouse::instance()->getX(), Mouse::instance()->getY());
 	if (m_selectSquare == 0) {
 		onBoard = false;
@@ -129,8 +127,8 @@ void Game::Update() {
 	if (!m_state.isDone()) {
 		//プレイヤーの手番
 		if (m_state.turn == Share::playerColor) {
-			//パス
-			if (m_state.getLegalBoard() == 0) {
+			//置けるところがなければパス
+			if (m_state.isCanPutAll() == 0) {
 				m_state.advance(0);
 				nowPass = true;
 			}
@@ -139,7 +137,7 @@ void Game::Update() {
 				//置く前に
 				undo_vec.push_back(std::make_pair(m_state, m_recentPut));
 				if (undo_vec.size() > UNDO_NUM) {
-					//先頭から削除
+					//先頭から記録を削除
 					undo_vec.erase(undo_vec.begin());
 				}
 				m_state.advance(m_selectSquare);
@@ -149,7 +147,6 @@ void Game::Update() {
 		}
 		//AIの手番
 		else {
-			TimeKeeper tk_think = TimeKeeper(THINK_TIME);
 			uint64_t tmp = aiFunc(m_state);
 			m_state.advance(tmp);
 			if (tmp != 0) {
@@ -159,7 +156,6 @@ void Game::Update() {
 			else {
 				nowPass = true;
 			}
-			while (!tk_think.isTimeOver()) {}
 		}
 	}
 	//試合終了時
@@ -206,18 +202,18 @@ void Game::Draw() {
 			int index = x + y * BOARD_SIZE;
 			switch (m_state.getPiece(HIGHEST >> index)) {
 			case CANPUT:
-				DrawBoxAA((float)(x_pos + 1), (float)(y_pos + 1), (float)(x_pos + SQUARE_SIZE - 1), (float)(y_pos + SQUARE_SIZE - 1), COLOR_CANPUT, true, 2.0f);
+				DrawBoxAA((float)(x_pos + 1), (float)(y_pos + 1), (float)(x_pos + SQUARE_SIZE - 1), (float)(y_pos + SQUARE_SIZE - 1), COLOR_ORANGE, true, 2.0f);
 				break;
 			case WHITE:
-				DrawBoxAA((float)(x_pos + 1), (float)(y_pos + 1), (float)(x_pos + SQUARE_SIZE - 1), (float)(y_pos + SQUARE_SIZE - 1), COLOR_BOARD, true, 2.0f);
+				DrawBoxAA((float)(x_pos + 1), (float)(y_pos + 1), (float)(x_pos + SQUARE_SIZE - 1), (float)(y_pos + SQUARE_SIZE - 1), COLOR_GREEN, true, 2.0f);
 				DrawExtendGraph(x_pos, y_pos, x_pos + SQUARE_SIZE, y_pos + SQUARE_SIZE, m_whitePic, true);
 				break;
 			case BLACK:
-				DrawBoxAA((float)(x_pos + 1), (float)(y_pos + 1), (float)(x_pos + SQUARE_SIZE - 1), (float)(y_pos + SQUARE_SIZE - 1), COLOR_BOARD, true, 2.0f);
+				DrawBoxAA((float)(x_pos + 1), (float)(y_pos + 1), (float)(x_pos + SQUARE_SIZE - 1), (float)(y_pos + SQUARE_SIZE - 1), COLOR_GREEN, true, 2.0f);
 				DrawExtendGraph(x_pos, y_pos, x_pos + SQUARE_SIZE, y_pos + SQUARE_SIZE, m_blackPic, true);
 				break;
 			default:
-				DrawBoxAA((float)(x_pos + 1), (float)(y_pos + 1), (float)(x_pos + SQUARE_SIZE - 1), (float)(y_pos + SQUARE_SIZE - 1), COLOR_BOARD, true, 2.0f);
+				DrawBoxAA((float)(x_pos + 1), (float)(y_pos + 1), (float)(x_pos + SQUARE_SIZE - 1), (float)(y_pos + SQUARE_SIZE - 1), COLOR_GREEN, true, 2.0f);
 			};
 			y_pos += SQUARE_SIZE;
 		}
@@ -250,8 +246,8 @@ void Game::Draw() {
 	std::string white = std::to_string(m_state.getNum(WHITE));
 	int blackWidth = GetDrawStringWidth(black.c_str(), (int)black.length());
 	int whiteWidth = GetDrawStringWidth(white.c_str(), (int)white.length());
-	DrawFormatString(BOX_BLACK_X + BOX_WIDTH - 5 - blackWidth, BOX_Y + BOX_HEIGHT - 55, GetColor(230, 230, 230), "%s", black.c_str());
-	DrawFormatString(BOX_WHITE_X + BOX_WIDTH - 5 - whiteWidth, BOX_Y + BOX_HEIGHT - 55, GetColor(50, 50, 50), "%s", white.c_str());
+	DrawFormatString(BOX_BLACK_X + BOX_WIDTH - 5 - blackWidth, BOX_Y + BOX_HEIGHT - 55, COLOR_WHITE, "%s", black.c_str());
+	DrawFormatString(BOX_WHITE_X + BOX_WIDTH - 5 - whiteWidth, BOX_Y + BOX_HEIGHT - 55, COLOR_BlACK, "%s", white.c_str());
 
 	SetFontSize(20);
 	std::string blackStr;
@@ -264,21 +260,19 @@ void Game::Draw() {
 		blackStr = "     AI";
 		whiteStr = "Player";
 	}
-	DrawString(BOX_BLACK_X + 50, BOX_Y + 40, blackStr.c_str(), GetColor(230, 230, 230));
-	DrawString(BOX_WHITE_X + 50, BOX_Y + 40, whiteStr.c_str(), GetColor(50, 50, 50));
+	DrawString(BOX_BLACK_X + 50, BOX_Y + 40, blackStr.c_str(), COLOR_WHITE);
+	DrawString(BOX_WHITE_X + 50, BOX_Y + 40, whiteStr.c_str(), COLOR_BlACK);
 
 	////ゲーム終了時の表示
 	if (m_state.isDone()) {
 		SetFontSize(50);
-		int winWidth = GetDrawStringWidth("WIN!", 4);
-		int loseWidth = GetDrawStringWidth("LOSE", 4);
 		if (m_state.getBlackPlayerStatus() == LOSE) {
-			DrawString((int)((WIN_SIZE_X / 2 - SQUARE_SIZE * 4) / 2 - winWidth / 2), (int)(WIN_SIZE_Y / 2 + 150), "LOSE", COLOR_LBLUE);
-			DrawString((int)(WIN_SIZE_X * 0.75 + SQUARE_SIZE * 2 - loseWidth / 2), (int)(WIN_SIZE_Y / 2 + 150), "WIN!", COLOR_RED);
+			DrawString((int)((WIN_SIZE_X / 2 - SQUARE_SIZE * 4) / 2 - WIN_WIDTH / 2), (int)(WIN_SIZE_Y / 2 + 150), "LOSE", COLOR_LBLUE);
+			DrawString((int)(WIN_SIZE_X * 0.75 + SQUARE_SIZE * 2 - LOSE_WIDTH / 2), (int)(WIN_SIZE_Y / 2 + 150), "WIN!", COLOR_RED);
 		}
 		else if (m_state.getBlackPlayerStatus() == WIN) {
-			DrawString((int)((WIN_SIZE_X / 2 - SQUARE_SIZE * 4) / 2 - winWidth / 2), (int)(WIN_SIZE_Y / 2 + 150), "WIN!", COLOR_RED);
-			DrawString((int)(WIN_SIZE_X * 0.75 + SQUARE_SIZE * 2 - loseWidth / 2), (int)(WIN_SIZE_Y / 2 + 150), "LOSE", COLOR_LBLUE);
+			DrawString((int)((WIN_SIZE_X / 2 - SQUARE_SIZE * 4) / 2 - WIN_WIDTH / 2), (int)(WIN_SIZE_Y / 2 + 150), "WIN!", COLOR_RED);
+			DrawString((int)(WIN_SIZE_X * 0.75 + SQUARE_SIZE * 2 - LOSE_WIDTH / 2), (int)(WIN_SIZE_Y / 2 + 150), "LOSE", COLOR_LBLUE);
 		}
 	}
 	else {
@@ -330,6 +324,7 @@ void Game::Finalize() {
 	deleteMem();
 }
 
+//画像、音声のメモリ解放
 void Game::deleteMem() {
 	DeleteGraph(m_gamePic);
 	DeleteGraph(m_blackPic);
@@ -346,6 +341,7 @@ void Game::deleteMem() {
 	DeleteSoundMem(m_stopSnd);
 }
 
+//選択されているマスを取得しsetする
 void Game::setSelectSquare(const int x , const int y) {
 	int pointX = (x - SIDE_MARGIN) / SQUARE_SIZE;
 	int pointY = (y - TOP_MARGIN) / SQUARE_SIZE;
@@ -358,6 +354,7 @@ void Game::setSelectSquare(const int x , const int y) {
 	}
 }
 
+//boardのマスの座用をxp ypの先に記録する
 void Game::getCoord(int* xp, int* yp, const uint64_t board)const {
 	for (int x = 0; x < BOARD_SIZE; x++) {
 		for (int y = 0; y < BOARD_SIZE; y++) {

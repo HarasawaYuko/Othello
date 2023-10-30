@@ -26,6 +26,7 @@ public:
 	void advance(uint64_t);
 	bool isDone()const;
 	bool isCanPut(uint64_t) const;
+	bool isCanPutAll() const;
 	int getNum(piece)const;
 	std::vector<uint64_t> legalAction()const;
 	WinningStatus getWinningStatus()const;

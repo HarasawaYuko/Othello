@@ -37,48 +37,49 @@ State::State() {
 	turn = BLACK;
 }
 
+//合法手が1のボードを取得
 uint64_t State::getLegalBoard() const{
 	uint64_t enemy_board = all_board xor my_board;//敵の置いている位置
-	uint64_t result = ALL_F;
-	uint64_t unput = ~all_board;//置いてないマス
+	uint64_t unput = ~all_board;//両者置いてないマス
+	uint64_t result = ALL_F;//結果記録用
 
-	uint64_t mayPut = ALL_F;//置ける可能性があるマス
 	//右シフトのループ(ベクトルごと)
 	for (int i = 0; i < 4; i++) {
 		uint64_t my_copy = my_board;
-		uint64_t mayTurn = ALL_F;//返る可能性があるマス
+		uint64_t mayPut = ALL_F;//置ける可能性があるマス
 		int count = 1;
 		//自分の隣に敵の駒があるか
 		shift(&my_copy, true, i, count);
-		mayTurn = my_copy & enemy_board;
+		mayPut = my_copy & enemy_board;
 		//返る可能性があるマスがあれば
-		while (mayTurn != 0) {
-			//シフト
-			shift(&mayTurn, true, i);
-			result = result | (mayTurn & unput);
+		while (mayPut != 0) {
+			//シフト(更に隣を調べる)
+			shift(&mayPut, true, i);
+			result = result | (mayPut & unput);
 			//置けるマスがあればその奥には置けない
-			mayTurn = ~result & mayTurn;
+			mayPut = ~result & mayPut;
 			//自分のマスがあればその奥には行けない
-			mayTurn = ~my_board & mayTurn;
+			mayPut = ~my_board & mayPut;
 			count++;
 		}
 	}
+	//左シフトのループ
 	for (int i = 0; i < 4; i++) {
-		uint64_t mayTurn = ALL_F;//返る可能性があるマス
+		uint64_t mayPut = ALL_F;//返る可能性があるマス
 		uint64_t my_copy = my_board;
 		int count = 1;
 		//自分の隣に敵の駒があるか
 		shift(&my_copy, false, i, count);
-		mayTurn = my_copy & enemy_board;
+		mayPut = my_copy & enemy_board;
 		//返る可能性があるマスがあれば
-		while (mayTurn != 0) {
+		while (mayPut != 0) {
 			//シフト
-			shift(&mayTurn, false, i);
-			result = result | (mayTurn & unput);
+			shift(&mayPut, false, i);
+			result = result | (mayPut & unput);
 			//置けるマスがあればその奥には置けない
-			mayTurn = ~result & mayTurn;
+			mayPut = ~result & mayPut;
 			//自分のマスがあればその奥には行けない
-			mayTurn = ~my_board & mayTurn;
+			mayPut = ~my_board & mayPut;
 			count++;
 		}
 	}
@@ -92,12 +93,12 @@ uint64_t State::getLegalBoard(piece color) const{
 	uint64_t result = ALL_F;
 	uint64_t unput = ~all_board;//置いてないマス
 
+	//現在のターンと異なれば逆転
 	if (color != turn) {
 		uint64_t tmp = my;
 		my = enemy;
 		enemy = tmp;
 	}
-
 	uint64_t mayPut = ALL_F;//置ける可能性があるマス
 	//右シフトのループ(ベクトルごと)
 	for (int i = 0; i < 4; i++) {
@@ -141,49 +142,51 @@ uint64_t State::getLegalBoard(piece color) const{
 	return result;
 }
 
-//action置いたところ
+// action置いた場所
+//actionによって返るマスが１のボードを取得
 uint64_t State::getTurnBoard(uint64_t action) const{
 	uint64_t result = ALL_F;
 	uint64_t unput = ~all_board;//置いてないマス
 	uint64_t ene_board = all_board ^ my_board;
 	for (int i = 0; i < 4; i++) {
-		uint64_t mayPut = action;
-		uint64_t mayTurn = ALL_F;
-		shift(&mayPut , true, i );
-		mayPut = mayPut & ene_board;
+		uint64_t action_copy = action;//置いたマス
+		uint64_t mayTurn = ALL_F;//返る可能性があるマス
+		//一つ隣を調べる
+		shift(&action_copy , true, i );
+		action_copy = action_copy & ene_board;
 		//隣に敵の駒があればループへ
-		while (mayPut != 0) {
+		while (action_copy != 0) {
 			//敵のマスなら返る可能性あり
-			mayTurn = mayTurn | mayPut;
+			mayTurn = mayTurn | action_copy;
 			//更に隣を調べる
-			shift(&mayPut ,true , i );
+			shift(&action_copy ,true , i );
 			//置ける場所発見したら
-			if ((my_board & mayPut) != 0) {
+			if ((my_board & action_copy) != 0) {
 				//現在のmayTurn
 				result = result | mayTurn;
 				break;
 			}
-			mayPut = ~unput & mayPut;
+			action_copy = ~unput & action_copy;
 		}
 	}
 	for (int i = 0; i < 4; i++) {
-		uint64_t mayPut = action;
+		uint64_t action_copy = action;
 		uint64_t mayTurn = ALL_F;
-		shift(&mayPut, false, i);
-		mayPut = mayPut & ene_board;
+		shift(&action_copy, false, i);
+		action_copy = action_copy & ene_board;
 		//隣に敵の駒があればループへ
-		while (mayPut != 0) {
+		while (action_copy != 0) {
 			//敵のマスなら返る可能性あり
-			mayTurn = mayTurn | mayPut;
+			mayTurn = mayTurn | action_copy;
 			//更に隣を調べる
-			shift(&mayPut, false, i);
+			shift(&action_copy, false, i);
 			//置ける場所発見したら
-			if ((my_board & mayPut) != 0) {
+			if ((my_board & action_copy) != 0) {
 				//現在のmayTurn
 				result = result | mayTurn;
 				break;
 			}
-			mayPut = ~unput & mayPut;
+			action_copy = ~unput & action_copy;
 		}
 	}
 	return result;
@@ -198,7 +201,6 @@ void State::advance(uint64_t action) {
 		//裏返す
 		my_board = my_board ^ getTurnBoard(action);
 	}
-	
 
 	//ターンを変える(ボードの交換)
 	turn ^= 1;
@@ -214,6 +216,10 @@ bool State::isDone() const{
 
 bool State::isCanPut(uint64_t action) const {
 	return (action & canput_board) != 0;
+}
+
+bool State::isCanPutAll() const {
+	return (canput_board != 0);
 }
 
 int State::getNum(piece color) const{

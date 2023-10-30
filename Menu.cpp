@@ -45,9 +45,6 @@ static const int CLOSE_Y = 10;
 static const int CLOSE_WIDTH = 60;
 static const int CLOSE_HEIGHT = 45;
 
-//色
-static const unsigned int COLOR_RED = GetColor(220, 45, 35);
-
 Menu::Menu(SceneChanger *changer) 
 	:BaseScene(changer),
 	m_bar_select_x(BAR_X),
@@ -169,21 +166,21 @@ void Menu::Draw() {
 	swipeRightButton.draw();
 
 	SetFontSize(AI_STR_SIZE);
-	int width = GetDrawStringWidth(Share::AI[AI_INDEX].c_str() , Share::AI[AI_INDEX].size());
+	int width = GetDrawStringWidth(Share::AI[AI_INDEX].c_str() , (int)Share::AI[AI_INDEX].size());
 	AI_STR_X = WIN_SIZE_X / 2 - width / 2;
-	DrawString(AI_STR_X , AI_STR_Y , Share::AI[AI_INDEX].c_str() , GetColor(30 , 30 , 30));
+	DrawString(AI_STR_X , AI_STR_Y , Share::AI[AI_INDEX].c_str() , COLOR_BlACK);
 
 	//難易度調整バー
-	DrawBoxAA(BAR_X, BAR_Y, BAR_X + BAR_WIDTH, BAR_Y + BAR_HEIGHT, GetColor(120, 120, 120), true);
+	DrawBoxAA(BAR_X, BAR_Y, BAR_X + BAR_WIDTH, BAR_Y + BAR_HEIGHT, COLOR_GRAY, true);
 	//選択箇所表示
-	DrawCircle(m_bar_select_x, BAR_Y, BAR_SELECT_SIZE, GetColor(10, 70, 150), true);
+	DrawCircle(m_bar_select_x, BAR_Y, BAR_SELECT_SIZE,COLOR_BLUE, true);
 	if (onSideBar) {
-		DrawCircle(m_bar_select_x, BAR_Y, BAR_SELECT_SIZE, GetColor(101, 187, 233), false, 3);
+		DrawCircle(m_bar_select_x, BAR_Y, BAR_SELECT_SIZE, COLOR_LBLUE, false, 3);
 	}
 	SetFontSize(35);
-	DrawFormatString(BAR_X + BAR_WIDTH + 95, BAR_Y - 20, GetColor(20, 20, 20), "%d", Share::level);
+	DrawFormatString(BAR_X + BAR_WIDTH + 95, BAR_Y - 20, COLOR_BlACK, "%d", Share::level);
 	SetFontSize(20);
-	DrawFormatString(BAR_X + BAR_WIDTH + 20, BAR_Y - 8, GetColor(20, 20, 20), "LEVEL:");
+	DrawFormatString(BAR_X + BAR_WIDTH + 20, BAR_Y - 8, COLOR_BlACK, "LEVEL:");
 
 	//開始ボタン
 	startButton.draw();
