@@ -26,7 +26,7 @@ static const int AI_STR_Y = SWIPE_Y + (SWIPE_HEIGHT/2) - (AI_STR_SIZE/2);
 
 //開始ボタン関係
 static const int START_BUTTON_WIDTH = 210;
-static const int START_BUTTON_HEIGHT = 80;
+static const int START_BUTTON_HEIGHT = 70;
 static const int START_BUTTON_X = WIN_CENT_X - START_BUTTON_WIDTH/2;
 static const int START_BUTTON_Y = 460;
 
