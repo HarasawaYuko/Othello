@@ -43,7 +43,7 @@ private:
 	//“ü—Í”»’è—p•Ï”
 	bool nowStart;
 	bool nowRadio;
-	bool nowSide;
+	bool nowSlide;
 	bool nowSwipe;
 	bool nowClose;
 
@@ -52,10 +52,11 @@ private:
 	Button swipeLeftButton;
 	Button swipeRightButton;
 	RadioButton turnButton;
+	SlideBar levelBar;
 
 	//•`‰æ—p
 	int m_bar_select_x;
-	int m_level;
+	int beforeLevel;
 
 	void deleteMem();
 

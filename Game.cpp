@@ -75,23 +75,23 @@ void Game::Initialize() {
 	}
 
 	//画像のロード
-	m_blackPic = LoadGraph("pic/Othello/black.png");
-	m_whitePic = LoadGraph("pic/Othello/white.png");
-	m_gamePic = LoadGraph("pic/Othello/game.png");
-	m_boxBlackPic = LoadGraph("pic/Othello/boxBlack.png");
-	m_boxWhitePic = LoadGraph("pic/Othello/boxWhite.png");
-	m_undoPic = LoadGraph("pic/Othello/undo.png");
-	m_undoOffPic = LoadGraph("pic/Othello/notUndo.png");
-	m_undoOnPic = LoadGraph("pic/Othello/undoOn.png");
-	m_stopPic = LoadGraph("pic/Othello/fin.png");
-	m_stopOnPic = LoadGraph("pic/Othello/finOn.png");
+	m_blackPic = LoadGraph("pic/black.png");
+	m_whitePic = LoadGraph("pic/white.png");
+	m_gamePic = LoadGraph("pic/game.png");
+	m_boxBlackPic = LoadGraph("pic/boxBlack.png");
+	m_boxWhitePic = LoadGraph("pic/boxWhite.png");
+	m_undoPic = LoadGraph("pic/undo.png");
+	m_undoOffPic = LoadGraph("pic/notUndo.png");
+	m_undoOnPic = LoadGraph("pic/undoOn.png");
+	m_stopPic = LoadGraph("pic/fin.png");
+	m_stopOnPic = LoadGraph("pic/finOn.png");
 
 	//音声のロード
-	m_pieceSnd = LoadSoundMem("sound/Othello/piece.mp3");
-	m_gameSnd = LoadSoundMem("sound/Othello/game.mp3");
-	m_passSnd = LoadSoundMem("sound/Othello/pass.mp3");
-	m_undoSnd = LoadSoundMem("sound/Othello/undo.mp3");
-	m_stopSnd = LoadSoundMem("sound/Othello/stop.mp3");
+	m_pieceSnd = LoadSoundMem("sound/piece.mp3");
+	m_gameSnd = LoadSoundMem("sound/game.mp3");
+	m_passSnd = LoadSoundMem("sound/pass.mp3");
+	m_undoSnd = LoadSoundMem("sound/undo.mp3");
+	m_stopSnd = LoadSoundMem("sound/stop.mp3");
 
 	//ボタンの作成
 	undoButton = Button(m_undoPic , m_undoOnPic ,UNDO_X , UNDO_Y , UNDO_WIDTH , UNDO_HEIGHT , m_undoOffPic);

@@ -48,7 +48,7 @@ static const int CLOSE_HEIGHT = 45;
 Menu::Menu(SceneChanger *changer) 
 	:BaseScene(changer),
 	m_bar_select_x(BAR_X),
-	m_level(1)
+	beforeLevel(1)
 {}
 
 Menu::~Menu(){}
@@ -59,18 +59,18 @@ void Menu::Initialize() {
 	Share::level = 1;
 
 	//画像のロード
-	m_titlePic = LoadGraph("pic/Othello/Title.png");
-	m_sideBarPic = LoadGraph("pic/Othello/SideBar.png");
-	m_closeButtonPic = LoadGraph("pic/Othello/fin.png");
-	m_closeFramePic = LoadGraph("pic/Othello/finFrame.png");
-	m_rightSwipePic = LoadGraph("pic/Othello/rightSwipe.png");
-	m_leftSwipePic = LoadGraph("pic/Othello/leftSwipe.png");
-	m_rightSwipeSelectPic = LoadGraph("pic/Othello/rightSwipeSelect.png");
-	m_leftSwipeSelectPic = LoadGraph("pic/Othello/leftSwipeSelect.png");
-	m_startPic = LoadGraph("pic/Othello/start.png");
-	m_startOnPic = LoadGraph("pic/Othello/startOn.png");
-	m_closePic = LoadGraph("pic/Othello/fin.png");
-	m_closeOnPic = LoadGraph("pic/Othello/finOn.png");
+	m_titlePic = LoadGraph("pic/Title.png");
+	m_sideBarPic = LoadGraph("pic/SideBar.png");
+	m_closeButtonPic = LoadGraph("pic/fin.png");
+	m_closeFramePic = LoadGraph("pic/finFrame.png");
+	m_rightSwipePic = LoadGraph("pic/rightSwipe.png");
+	m_leftSwipePic = LoadGraph("pic/leftSwipe.png");
+	m_rightSwipeSelectPic = LoadGraph("pic/rightSwipeSelect.png");
+	m_leftSwipeSelectPic = LoadGraph("pic/leftSwipeSelect.png");
+	m_startPic = LoadGraph("pic/start.png");
+	m_startOnPic = LoadGraph("pic/startOn.png");
+	m_closePic = LoadGraph("pic/fin.png");
+	m_closeOnPic = LoadGraph("pic/finOn.png");
 
 
 	//ボタン作成
@@ -79,13 +79,14 @@ void Menu::Initialize() {
 	swipeLeftButton = Button(m_leftSwipePic , m_leftSwipeSelectPic , SWIPE_X ,SWIPE_Y , SWIPE_WIDTH , SWIPE_HEIGHT);
 	swipeRightButton = Button(m_rightSwipePic, m_rightSwipeSelectPic, SWIPE_X + SWIPE_SPACE, SWIPE_Y, SWIPE_WIDTH, SWIPE_HEIGHT);
 	turnButton = RadioButton(TURN_RADIO_X, TURN_RADIO_Y, TURN_RADIO_SIZE,TURN_RADIO_SPACE, 2, 35, {"BLACK" ,"WHITE"});
+	levelBar = SlideBar(BAR_X , BAR_Y , BAR_WIDTH ,BAR_SELECT_SIZE);
 
 	//音声のロード
-	m_menuSnd = LoadSoundMem("sound/Othello/menu.mp3");
-	m_startSnd = LoadSoundMem("sound/Othello/start.mp3");
-	m_radioSnd = LoadSoundMem("sound/Othello/radio.mp3");
-	m_sideSnd = LoadSoundMem("sound/Othello/side.mp3");
-	m_swipeSnd = LoadSoundMem("sound/Othello/swipe.mp3");
+	m_menuSnd = LoadSoundMem("sound/menu.mp3");
+	m_startSnd = LoadSoundMem("sound/start.mp3");
+	m_radioSnd = LoadSoundMem("sound/radio.mp3");
+	m_sideSnd = LoadSoundMem("sound/side.mp3");
+	m_swipeSnd = LoadSoundMem("sound/swipe.mp3");
 
 	//音量設定
 	ChangeVolumeSoundMem(130, m_menuSnd);
@@ -104,7 +105,7 @@ void Menu::Update() {
 	onSwipeRight = false;
 	nowStart = false;
 	nowRadio = false;
-	nowSide = false;
+	nowSlide = false;
 	nowSwipe = false;
 	nowClose = false;
 
@@ -131,15 +132,12 @@ void Menu::Update() {
 
 	//サイドバー
 	//レベルの設定
-	m_level = Share::level;
-	Share::level = (m_bar_select_x - BAR_X) / (BAR_WIDTH / AI_LEVEL_MAX[AI_INDEX]) + 1;
-	if (isIn(BAR_X , BAR_Y - BAR_SELECT_SIZE , BAR_WIDTH , BAR_HEIGHT + BAR_SELECT_SIZE *2)) {
-		onSideBar = true;
-		if (Mouse::instance()->getClick(LEFT_CLICK)) {
-			m_bar_select_x = Mouse::instance()->getX();
-			if (Share::level != m_level) {
-				nowSide = true;
-			}
+	levelBar.update(&nowSlide);
+	if (nowSlide) {
+		beforeLevel = Share::level;
+		Share::level = (float)(levelBar.getRate() * AI_LEVEL_MAX[(int)Share::ai]) + 1;
+		if (beforeLevel == Share::level) {
+			nowSlide = false;
 		}
 	}
 
@@ -171,12 +169,7 @@ void Menu::Draw() {
 	DrawString(AI_STR_X , AI_STR_Y , Share::AI[AI_INDEX].c_str() , COLOR_BlACK);
 
 	//難易度調整バー
-	DrawBoxAA(BAR_X, BAR_Y, BAR_X + BAR_WIDTH, BAR_Y + BAR_HEIGHT, COLOR_GRAY, true);
-	//選択箇所表示
-	DrawCircle(m_bar_select_x, BAR_Y, BAR_SELECT_SIZE,COLOR_BLUE, true);
-	if (onSideBar) {
-		DrawCircle(m_bar_select_x, BAR_Y, BAR_SELECT_SIZE, COLOR_LBLUE, false, 3);
-	}
+	levelBar.draw();
 	SetFontSize(35);
 	DrawFormatString(BAR_X + BAR_WIDTH + 95, BAR_Y - 20, COLOR_BlACK, "%d", Share::level);
 	SetFontSize(20);
@@ -192,7 +185,7 @@ void Menu::Draw() {
 	if (nowRadio) {
 		PlaySoundMem(m_radioSnd, DX_PLAYTYPE_NORMAL, true);
 	}
-	if (nowSide) {
+	if (nowSlide) {
 		PlaySoundMem(m_sideSnd, DX_PLAYTYPE_NORMAL, true);
 	}
 	if (nowSwipe) {

@@ -58,15 +58,15 @@ void Result::Initialize() {
 	PlaySoundMem(m_resultSnd, DX_PLAYTYPE_LOOP, true);
 
 	//画像のロード
-	m_resultPic = LoadGraph("pic/Othello/result.png");
-	nextPic = LoadGraph("pic/Othello/next.png");
-	nextOnPic = LoadGraph("pic/Othello/nextOn.png");
-	retryPic = LoadGraph("pic/Othello/retry.png");
-	retryOnPic = LoadGraph("pic/Othello/retryOn.png");
+	m_resultPic = LoadGraph("pic/result.png");
+	nextPic = LoadGraph("pic/next.png");
+	nextOnPic = LoadGraph("pic/nextOn.png");
+	retryPic = LoadGraph("pic/retry.png");
+	retryOnPic = LoadGraph("pic/retryOn.png");
 	
 	//音声のロード
-	m_nextSnd = LoadSoundMem("sound/Othello/next.mp3");
-	m_retrySnd = LoadSoundMem("sound/Othello/start.mp3");
+	m_nextSnd = LoadSoundMem("sound/next.mp3");
+	m_retrySnd = LoadSoundMem("sound/start.mp3");
 	//音量設定
 	ChangeVolumeSoundMem(150, m_nextSnd);
 	ChangeVolumeSoundMem(150, m_retrySnd);

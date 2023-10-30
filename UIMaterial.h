@@ -54,3 +54,19 @@ public:
 	void draw()const;
 	int getSelect() const;
 };
+
+class SlideBar {
+private:
+	int length;
+	int x;
+	int y;
+	int size;
+	int selectX;
+	bool on;
+public:
+	SlideBar(){}
+	SlideBar(const int , const int , const int , const int);
+	void update(bool*);
+	void draw() const;
+	float getRate()const;
+};
