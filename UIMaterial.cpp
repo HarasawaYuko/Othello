@@ -11,11 +11,12 @@ bool isIn(const int x, const int y, const int width, const int height) {
 	}
 }
 
-Button::Button(const int pic , const int onPic , const int x, const int y , const int width, const int height)
-	: pic(pic) ,onPic(onPic) , x(x) , y(y) , width(width) , height(height) , isOn(false)
+Button::Button(const int pic , const int onPic , const int x, const int y , const int width, const int height , const int offPic)
+	: pic(pic) ,onPic(onPic) , x(x) , y(y) , width(width) , height(height) , isOn(false) ,offPic(offPic)
 {}
 
 void Button::update(bool* click) {
+	if (!active) return;
 	*click = false;
 	isOn = false;
 	if (isIn(x ,y , width ,height)) {
@@ -27,6 +28,10 @@ void Button::update(bool* click) {
 }
 
 void Button::draw() {
+	if (!active) {
+		DrawExtendGraph(x, y, x + width, y + height, offPic, true);
+		return;
+	}
 	if(isOn){
 		DrawExtendGraph(x , y , x+width , y+height , onPic ,true);
 	}
@@ -34,6 +39,16 @@ void Button::draw() {
 		DrawExtendGraph(x, y, x + width, y + height, pic, true);
 	}
 }
+
+void Button::turnOff() {
+	active = false;
+}
+
+void Button::turnOn() {
+	active = true;
+}
+
+/*********************/
 
 RadioButton::RadioButton(const int x , const int y ,const int size , const int space, const int num ,const int font ,const std::vector<std::string> strs)
 	:x(x) , y(y) ,size(size),space(space), num(num), on(-1), fontsize(font), strs(strs)

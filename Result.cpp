@@ -1,6 +1,6 @@
 #include "Result.h"
 #include "Share.h"
-#include "UIMaterial.h"
+#include "Mouse.h"
 
 /**定数**/
 //AI表示
@@ -30,7 +30,7 @@ static const int NUM_Y = 290;
 //ボタン
 static const int BUTTON_X = 250;
 static const int BUTTON_WIDTH = 300;
-static const int BUTTON_HEIGHT = 60;
+static const int BUTTON_HEIGHT = 70;
 //次へボタン
 static const int NEXT_Y = 375;
 //もう一度ボタン
@@ -59,6 +59,11 @@ void Result::Initialize() {
 
 	//画像のロード
 	m_resultPic = LoadGraph("pic/Othello/result.png");
+	nextPic = LoadGraph("pic/Othello/next.png");
+	nextOnPic = LoadGraph("pic/Othello/nextOn.png");
+	retryPic = LoadGraph("pic/Othello/retry.png");
+	retryOnPic = LoadGraph("pic/Othello/retryOn.png");
+	
 	//音声のロード
 	m_nextSnd = LoadSoundMem("sound/Othello/next.mp3");
 	m_retrySnd = LoadSoundMem("sound/Othello/start.mp3");
@@ -111,6 +116,10 @@ void Result::Initialize() {
 	SetFontSize(BUTTON_LETTER_SIZE);
 	NEXT_LETTER_X = (BUTTON_WIDTH / 2) - (GetDrawStringWidth("NEXT", 4) / 2);
 	RETRY_LETTER_X = (BUTTON_WIDTH / 2) - (GetDrawStringWidth("RETRY", 5) / 2);
+
+	//ボタン
+	nextButton = Button(nextPic, nextOnPic, BUTTON_X, NEXT_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
+	retryButton = Button(retryPic, retryOnPic, BUTTON_X, RETRY_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
 }
 
 void Result::Update() {
@@ -118,30 +127,34 @@ void Result::Update() {
 	onNext = false;
 	onRetry = false;
 	//マウス位置の取得
-	int mousePosX;
-	int mousePosY;
-	int mouseInput = GetMouseInput();
-	GetMousePoint(&mousePosX , &mousePosY);
-
+	Mouse::instance()->update();
 
 	//次へボタン
-	if (isIn(BUTTON_X , NEXT_Y , BUTTON_WIDTH , BUTTON_HEIGHT)) {
-		onNext = true;
-		//クリックされたら
-		if (mouseInput & MOUSE_INPUT_LEFT) {
-			nowNext = true;
-			m_sceneChanger->ChangeScene(Scene_Menu);
-		}
+	//if (isIn(BUTTON_X , NEXT_Y , BUTTON_WIDTH , BUTTON_HEIGHT)) {
+	//	onNext = true;
+	//	//クリックされたら
+	//	if (mouseInput & MOUSE_INPUT_LEFT) {
+	//		nowNext = true;
+	//		m_sceneChanger->ChangeScene(Scene_Menu);
+	//	}
+	//}
+	nextButton.update(&nowNext);
+	if (nowNext) {
+		m_sceneChanger->ChangeScene(Scene_Menu);
 	}
 
 	//もう一度ボタン
-	if (isIn(BUTTON_X, RETRY_Y, BUTTON_WIDTH, BUTTON_HEIGHT)) {
-		onRetry = true;
-		//クリックされたら
-		if (mouseInput & MOUSE_INPUT_LEFT) {
-			nowRetry = true;
-			m_sceneChanger->ChangeScene(Scene_Game);
-		}
+	//if (isIn(BUTTON_X, RETRY_Y, BUTTON_WIDTH, BUTTON_HEIGHT)) {
+	//	onRetry = true;
+	//	//クリックされたら
+	//	if (mouseInput & MOUSE_INPUT_LEFT) {
+	//		nowRetry = true;
+	//		m_sceneChanger->ChangeScene(Scene_Game);
+	//	}
+	//}
+	retryButton.update(&nowRetry);
+	if (nowRetry) {
+		m_sceneChanger->ChangeScene(Scene_Game);
 	}
 }
 
@@ -173,18 +186,20 @@ void Result::Draw() {
 	SetFontSize(BUTTON_LETTER_SIZE);
 
 	//次へボタン
-	DrawBoxAA(BUTTON_X, NEXT_Y, BUTTON_X + BUTTON_WIDTH, NEXT_Y + BUTTON_HEIGHT, COLOR_BLUE, true);
+	/*DrawBoxAA(BUTTON_X, NEXT_Y, BUTTON_X + BUTTON_WIDTH, NEXT_Y + BUTTON_HEIGHT, COLOR_BLUE, true);
 	DrawString(BUTTON_X + NEXT_LETTER_X, NEXT_Y + BUTTON_LETTER_Y, "NEXT", GetColor(230, 230, 230));
 	if (onNext) {
 		DrawBoxAA(BUTTON_X, NEXT_Y, BUTTON_X + BUTTON_WIDTH, NEXT_Y + BUTTON_HEIGHT, GetColor(101, 187, 233), false, 5.0);
-	}
+	}*/
+	nextButton.draw();
 
 	//もう一度ボタン
-	DrawBoxAA(BUTTON_X, RETRY_Y, BUTTON_X + BUTTON_WIDTH, RETRY_Y + BUTTON_HEIGHT, COLOR_BLUE, true);
+	/*DrawBoxAA(BUTTON_X, RETRY_Y, BUTTON_X + BUTTON_WIDTH, RETRY_Y + BUTTON_HEIGHT, COLOR_BLUE, true);
 	DrawString(BUTTON_X + RETRY_LETTER_X, RETRY_Y + BUTTON_LETTER_Y, "RETRY", GetColor(230, 230, 230));
 	if (onRetry) {
 		DrawBoxAA(BUTTON_X, RETRY_Y, BUTTON_X + BUTTON_WIDTH, RETRY_Y + BUTTON_HEIGHT, GetColor(101, 187, 233), false, 5.0);
-	}
+	}*/
+	retryButton.draw();
 }
 
 void Result::Finalize() {

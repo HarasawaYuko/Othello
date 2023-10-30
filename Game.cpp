@@ -82,10 +82,11 @@ void Game::Initialize() {
 	m_gamePic = LoadGraph("pic/Othello/game.png");
 	m_boxBlackPic = LoadGraph("pic/Othello/boxBlack.png");
 	m_boxWhitePic = LoadGraph("pic/Othello/boxWhite.png");
-	m_undoButtonPic = LoadGraph("pic/Othello/undo.png");
-	m_undoButtonOffPic = LoadGraph("pic/Othello/notUndo.png");
-	m_undoFramePic = LoadGraph("pic/Othello/undoFrame.png");
-	m_stopButtonPic = LoadGraph("pic/Othello/stop.png");
+	m_undoPic = LoadGraph("pic/Othello/undo.png");
+	m_undoOffPic = LoadGraph("pic/Othello/notUndo.png");
+	m_undoOnPic = LoadGraph("pic/Othello/undoOn.png");
+	m_stopPic = LoadGraph("pic/Othello/fin.png");
+	m_stopOnPic = LoadGraph("pic/Othello/finOn.png");
 
 	//音声のロード
 	m_pieceSnd = LoadSoundMem("sound/Othello/piece.mp3");
@@ -93,7 +94,11 @@ void Game::Initialize() {
 	m_passSnd = LoadSoundMem("sound/Othello/pass.mp3");
 	m_undoSnd = LoadSoundMem("sound/Othello/undo.mp3");
 	m_stopSnd = LoadSoundMem("sound/Othello/stop.mp3");
-	
+
+	//ボタンの作成
+	undoButton = Button(m_undoPic , m_undoOnPic ,UNDO_X , UNDO_Y , UNDO_WIDTH , UNDO_HEIGHT , m_undoOffPic);
+	stopButton = Button(m_stopPic , m_stopOnPic ,STOP_X , STOP_Y , STOP_WIDTH , STOP_HEIGHT);
+
 	//音量設定
 	ChangeVolumeSoundMem(110, m_gameSnd);
 
@@ -119,6 +124,8 @@ void Game::Update() {
 	else {
 		onBoard = true;
 	}
+
+	//試合中
 	if (!m_state.isDone()) {
 		//プレイヤーの手番
 		if (m_state.turn == Share::playerColor) {
@@ -167,22 +174,22 @@ void Game::Update() {
 		}
 	}
 
-	if (isIn(UNDO_X, UNDO_Y, UNDO_X + UNDO_WIDTH, UNDO_Y + UNDO_HEIGHT)) {
-		onUndo = true;
-		if (Mouse::instance()->getClickNow(LEFT_CLICK) && undo_vec.size() > 0) {
-			m_state = undo_vec.back().first;
-			m_recentPut = undo_vec.back().second;
-			nowUndo = true;
-			undo_vec.erase(undo_vec.end() - 1);
-		}
+	//Undoボタン
+	//状態が保存されて入なければ
+	if (undo_vec.size() == 0) undoButton.turnOff();
+	else undoButton.turnOn();
+	undoButton.update(&nowUndo);
+	if (nowUndo) {
+		m_state = undo_vec.back().first;
+		m_recentPut = undo_vec.back().second;
+		undo_vec.erase(undo_vec.end() - 1);
 	}
+
 	//終了ボタン
-	if (isIn(STOP_X, STOP_Y, STOP_X + STOP_WIDTH, STOP_Y + STOP_HEIGHT)) {
-		onStop = true;
-		if (Mouse::instance()->getClickNow(LEFT_CLICK)) {
-			m_sceneChanger->ChangeScene(Scene_Menu);
-			nowToMenu = true;
-		}
+	stopButton.update(&nowStop);
+	if (nowStop) {
+		m_sceneChanger->ChangeScene(Scene_Menu);
+		nowToMenu = true;
 	}
 }
 
@@ -283,22 +290,13 @@ void Game::Draw() {
 			DrawBoxAA(BOX_WHITE_X - 4, BOX_Y - 4, BOX_WHITE_X + BOX_WIDTH + 4, BOX_Y + BOX_HEIGHT + 4, COLOR_LBLUE, false, 8);
 		}
 	}
+
 	//undoボタン
-	if (undo_vec.empty()) {
-		DrawExtendGraph(UNDO_X, UNDO_Y, UNDO_X + UNDO_WIDTH, UNDO_Y + UNDO_HEIGHT, m_undoButtonOffPic, true);
-	}
-	else {
-		DrawExtendGraph(UNDO_X, UNDO_Y, UNDO_X + UNDO_WIDTH, UNDO_Y + UNDO_HEIGHT, m_undoButtonPic, true);
-	}
-	if (onUndo) {
-		DrawExtendGraph(UNDO_X, UNDO_Y, UNDO_X + UNDO_WIDTH, UNDO_Y + UNDO_HEIGHT, m_undoFramePic, true);
-	}
+	undoButton.draw();
 
 	//stopボタン
-	DrawExtendGraph(STOP_X, STOP_Y, STOP_X + STOP_WIDTH, STOP_Y + STOP_HEIGHT, m_stopButtonPic, true);
-	if (onStop) {
-		DrawExtendGraph(STOP_X, STOP_Y, STOP_X + STOP_WIDTH, STOP_Y + STOP_HEIGHT, m_undoFramePic, true);
-	}
+	stopButton.draw();
+
 	//音声
 	if (nowPut) {
 		PlaySoundMem(m_pieceSnd, DX_PLAYTYPE_NORMAL, true);
@@ -338,10 +336,9 @@ void Game::deleteMem() {
 	DeleteGraph(m_whitePic);
 	DeleteGraph(m_boxBlackPic);
 	DeleteGraph(m_boxWhitePic);
-	DeleteGraph(m_undoButtonPic);
-	DeleteGraph(m_undoFramePic);
-	DeleteGraph(m_undoButtonOffPic);
-	DeleteGraph(m_stopButtonPic);
+	DeleteGraph(m_undoPic);
+	DeleteGraph(m_undoOffPic);
+	DeleteGraph(m_stopPic);
 	DeleteSoundMem(m_gameSnd);
 	DeleteSoundMem(m_pieceSnd);
 	DeleteSoundMem(m_passSnd);

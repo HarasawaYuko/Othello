@@ -17,17 +17,21 @@ class Button {
 private:
 	int pic;
 	int onPic;
+	int offPic;
 	int x;
 	int y;
 	int width;
 	int height;
 	bool isOn;
+	bool active = true;
 
 public:
 	Button() {};
-	Button(const int , const int,const int , const int, const int, const int );
+	Button(const int , const int,const int , const int, const int, const int  , const int offPic = 1);
 	void update(bool*);
 	void draw();
+	void turnOff();
+	void turnOn();
 };
 
 class RadioButton {

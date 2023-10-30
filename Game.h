@@ -5,6 +5,7 @@
 #include "SceneChanger.h"
 #include "State.h"
 #include "include.h"
+#include "UIMaterial.h"
 
 using AIFunction = std::function<uint64_t(const State &)>;
 
@@ -23,10 +24,12 @@ private:
 	int m_whitePic;
 	int m_boxBlackPic;
 	int m_boxWhitePic;
-	int m_undoButtonPic;
-	int m_undoButtonOffPic;
-	int m_undoFramePic;
-	int m_stopButtonPic;
+	int m_undoPic;
+	int m_undoOffPic;
+	int m_undoOnPic;
+	int m_stopPic;
+	int m_stopOnPic;
+
 	//音声ハンドル
 	int m_gameSnd;
 	int m_pieceSnd;
@@ -35,6 +38,10 @@ private:
 	int m_stopSnd;
 	//AI用
 	int m_playoutNum;
+
+	//ボタン
+	Button undoButton;
+	Button stopButton;
 
 	void getCoord(int* , int* , const uint64_t)const;
 	void setSelectSquare(const int , const int);
