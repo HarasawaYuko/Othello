@@ -114,6 +114,5 @@ void SlideBar::draw() const{
 }
 
 float SlideBar::getRate()const {
-	printfDx("%f\n", (float)(selectX - x) / length);
 	return ((float)(selectX - x)/length);
 }
