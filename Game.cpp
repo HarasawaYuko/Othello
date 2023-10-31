@@ -35,8 +35,9 @@ static const int STOP_WIDTH = 60;
 static const int STOP_HEIGHT = 45;
 
 //èüîsï\é¶ï∂éöïù
-static const int WIN_WIDTH = GetDrawStringWidth("WIN!", 4);
-static const int LOSE_WIDTH = GetDrawStringWidth("LOSE", 4);
+static       int WIN_WIDTH;
+static       int LOSE_WIDTH;
+
 
 
 //ï`âÊîªíËóp
@@ -96,6 +97,12 @@ void Game::Initialize() {
 	//É{É^ÉìÇÃçÏê¨
 	undoButton = Button(m_undoPic , m_undoOnPic ,UNDO_X , UNDO_Y , UNDO_WIDTH , UNDO_HEIGHT , m_undoOffPic);
 	stopButton = Button(m_stopPic , m_stopOnPic ,STOP_X , STOP_Y , STOP_WIDTH , STOP_HEIGHT);
+
+	//ï∂éöïùåvéZ
+	SetFontSize(50);
+	WIN_WIDTH = GetDrawStringWidth("WIN!", 4);
+	LOSE_WIDTH = GetDrawStringWidth("LOSE", 4);
+
 
 	//âπó ê›íË
 	ChangeVolumeSoundMem(110, m_gameSnd);
@@ -267,11 +274,11 @@ void Game::Draw() {
 	if (m_state.isDone()) {
 		SetFontSize(50);
 		if (m_state.getBlackPlayerStatus() == LOSE) {
-			DrawString((int)((WIN_SIZE_X / 2 - SQUARE_SIZE * 4) / 2 - WIN_WIDTH / 2), (int)(WIN_SIZE_Y / 2 + 150), "LOSE", COLOR_LBLUE);
+			DrawString((int)((WIN_CENT_X - SQUARE_SIZE * 4) / 2 - WIN_WIDTH), (int)(WIN_SIZE_Y / 2 + 150), "LOSE", COLOR_LBLUE);
 			DrawString((int)(WIN_SIZE_X * 0.75 + SQUARE_SIZE * 2 - LOSE_WIDTH / 2), (int)(WIN_SIZE_Y / 2 + 150), "WIN!", COLOR_RED);
 		}
 		else if (m_state.getBlackPlayerStatus() == WIN) {
-			DrawString((int)((WIN_SIZE_X / 2 - SQUARE_SIZE * 4) / 2 - WIN_WIDTH / 2), (int)(WIN_SIZE_Y / 2 + 150), "WIN!", COLOR_RED);
+			DrawString((int)((WIN_CENT_X - SQUARE_SIZE * 4) / 2 - WIN_WIDTH/2), (int)(WIN_SIZE_Y / 2 + 150), "WIN!", COLOR_RED);
 			DrawString((int)(WIN_SIZE_X * 0.75 + SQUARE_SIZE * 2 - LOSE_WIDTH / 2), (int)(WIN_SIZE_Y / 2 + 150), "LOSE", COLOR_LBLUE);
 		}
 	}

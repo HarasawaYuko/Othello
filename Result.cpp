@@ -53,7 +53,7 @@ Result::~Result() {
 
 void Result::Initialize() {
 	//BGM‚ğÄ¶
-	m_resultSnd = LoadSoundMem("sound/Othello/result.mp3");
+	m_resultSnd = LoadSoundMem("sound/result.mp3");
 	ChangeVolumeSoundMem(130, m_resultSnd);
 	PlaySoundMem(m_resultSnd, DX_PLAYTYPE_LOOP, true);
 
