@@ -11,7 +11,7 @@
 static const int TOP_MARGIN = 50;//上側マージン
 static const int SIDE_MARGIN = 150;//横マージン
 static const int SQUARE_SIZE = 62;//マスの大きさ
-static const int PLAYOUT_NUM_LEVEL = 10000;//1レベルごとのプレイアウト
+static const int PLAYOUT_NUM_LEVEL = 5000;//1レベルごとのプレイアウト
 static const int UNDO_NUM = 3;//undoできる数
 static const int TO_RESULT_TIME = 10;
 

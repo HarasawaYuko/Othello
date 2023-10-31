@@ -52,7 +52,7 @@ void Button::turnOn() {
 /**********ラジオボタン***********/
 
 RadioButton::RadioButton(const int x , const int y ,const int size , const int space, const int num ,const int font ,const std::vector<std::string> strs)
-	:x(x) , y(y) ,size(size),space(space), num(num), on(-1), fontsize(font), strs(strs)
+	:x(x) , y(y) ,size(size),space(space), num(num), on(-1), fontsize(font), strs(strs),select(0)
 {}
 
 void RadioButton::update(bool* click) {
@@ -95,7 +95,7 @@ SlideBar::SlideBar(const int x , const int y , const int length ,const int size 
 void SlideBar::update(bool*click) {
 	*click = false;
 	on = false;
-	if (isIn(x , y - size ,length , y+size*2)) {
+	if (isIn(x , y - size ,length , size*2)) {
 		on = true;
 		if (Mouse::instance()->getClick(LEFT_CLICK)) {
 			*click = true;
