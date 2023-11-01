@@ -46,9 +46,7 @@ static const int CLOSE_WIDTH = 60;
 static const int CLOSE_HEIGHT = 45;
 
 Menu::Menu(SceneChanger *changer) 
-	:BaseScene(changer),
-	m_bar_select_x(BAR_X),
-	beforeLevel(1)
+	:BaseScene(changer)
 {}
 
 Menu::~Menu(){}
@@ -74,12 +72,12 @@ void Menu::Initialize() {
 
 
 	//ボタン作成
-	startButton = Button( m_startPic, m_startOnPic,START_BUTTON_X , START_BUTTON_Y , START_BUTTON_WIDTH , START_BUTTON_HEIGHT );
-	closeButton = Button(m_closePic, m_closeOnPic, CLOSE_X, CLOSE_Y, CLOSE_WIDTH, CLOSE_HEIGHT);
-	swipeLeftButton = Button(m_leftSwipePic , m_leftSwipeSelectPic , SWIPE_X ,SWIPE_Y , SWIPE_WIDTH , SWIPE_HEIGHT);
-	swipeRightButton = Button(m_rightSwipePic, m_rightSwipeSelectPic, SWIPE_X + SWIPE_SPACE, SWIPE_Y, SWIPE_WIDTH, SWIPE_HEIGHT);
-	turnButton = RadioButton(TURN_RADIO_X, TURN_RADIO_Y, TURN_RADIO_SIZE,TURN_RADIO_SPACE, 2, 35, {"BLACK" ,"WHITE"});
-	levelBar = SlideBar(BAR_X , BAR_Y , BAR_WIDTH ,BAR_SELECT_SIZE);
+	m_startButton = Button( m_startPic, m_startOnPic,START_BUTTON_X , START_BUTTON_Y , START_BUTTON_WIDTH , START_BUTTON_HEIGHT );
+	m_closeButton = Button(m_closePic, m_closeOnPic, CLOSE_X, CLOSE_Y, CLOSE_WIDTH, CLOSE_HEIGHT);
+	m_swipeLeftButton = Button(m_leftSwipePic , m_leftSwipeSelectPic , SWIPE_X ,SWIPE_Y , SWIPE_WIDTH , SWIPE_HEIGHT);
+	m_swipeRightButton = Button(m_rightSwipePic, m_rightSwipeSelectPic, SWIPE_X + SWIPE_SPACE, SWIPE_Y, SWIPE_WIDTH, SWIPE_HEIGHT);
+	m_turnButton = RadioButton(TURN_RADIO_X, TURN_RADIO_Y, TURN_RADIO_SIZE,TURN_RADIO_SPACE, 2, 35, {"BLACK" ,"WHITE"});
+	m_levelBar = SlideBar(BAR_X , BAR_Y , BAR_WIDTH ,BAR_SELECT_SIZE);
 
 	//音声のロード
 	m_menuSnd = LoadSoundMem("sound/menu.mp3");
@@ -97,59 +95,53 @@ void Menu::Initialize() {
 
 void Menu::Update() {
 	//フラグのリセット
-	onClose = false;
-	onRadioBlack = false;
-	onRadioWhite = false;
-	onSideBar = false;
-	onSwipeLeft = false;
-	onSwipeRight = false;
-	nowStart = false;
-	nowRadio = false;
-	nowSlide = false;
-	nowSwipe = false;
-	nowClose = false;
+	m_nowStart = false;
+	m_nowRadio = false;
+	m_nowSlide = false;
+	m_nowSwipe = false;
+	m_nowClose = false;
 
 	//マウス位置の取得
 	Mouse::instance()->update();
 
-	turnButton.update(&nowRadio);
-	if (nowRadio) {
-		Share::playerColor = (piece)turnButton.getSelect();
+	m_turnButton.update(&m_nowRadio);
+	if (m_nowRadio) {
+		Share::playerColor = (piece)m_turnButton.getSelect();
 	}
 
 	//AI選択用スワイプボタン
-	swipeLeftButton.update(&nowSwipe);
-	if (nowSwipe) {
+	m_swipeLeftButton.update(&m_nowSwipe);
+	if (m_nowSwipe) {
 		AI_INDEX--;
 		if (AI_INDEX < 0) AI_INDEX = AI_NUM - 1;
 	}
 	else{
-		swipeRightButton.update(&nowSwipe);
-		if (nowSwipe) {
+		m_swipeRightButton.update(&m_nowSwipe);
+		if (m_nowSwipe) {
 			AI_INDEX = (AI_INDEX + 1) % AI_NUM;
 		}
 	}
 
 	//サイドバー
 	//レベルの設定
-	levelBar.update(&nowSlide);
-	if (nowSlide) {
-		beforeLevel = Share::level;
-		Share::level = (float)(levelBar.getRate() * AI_LEVEL_MAX[(int)Share::ai]) + 1;
+	m_levelBar.update(&m_nowSlide);
+	if (m_nowSlide) {
+		int beforeLevel = Share::level;
+		Share::level = (float)(m_levelBar.getRate() * AI_LEVEL_MAX[(int)Share::ai]) + 1;
 		if (beforeLevel == Share::level) {
-			nowSlide = false;
+			m_nowSlide = false;
 		}
 	}
 
 	//開始ボタン
-	startButton.update(&nowStart);
-	if (nowStart) {
+	m_startButton.update(&m_nowStart);
+	if (m_nowStart) {
 		m_sceneChanger->ChangeScene(Scene_Game);
 	}
 
 	//閉じるボタン
-	closeButton.update(&nowClose);
-	if (nowClose) {
+	m_closeButton.update(&m_nowClose);
+	if (m_nowClose) {
 		m_sceneChanger->ChangeScene(Scene_Fin);
 	}
 }
@@ -157,11 +149,11 @@ void Menu::Update() {
 void Menu::Draw() {
 	DrawExtendGraph(0, 0, WIN_SIZE_X, WIN_SIZE_Y, m_titlePic, true);
 	//手番選択用ラジオボタン
-	turnButton.draw();
+	m_turnButton.draw();
 
 	//AI選択表示
-	swipeLeftButton.draw();
-	swipeRightButton.draw();
+	m_swipeLeftButton.draw();
+	m_swipeRightButton.draw();
 
 	SetFontSize(AI_STR_SIZE);
 	int width = GetDrawStringWidth(Share::AI[AI_INDEX].c_str() , (int)Share::AI[AI_INDEX].size());
@@ -169,26 +161,26 @@ void Menu::Draw() {
 	DrawString(AI_STR_X , AI_STR_Y , Share::AI[AI_INDEX].c_str() , COLOR_BlACK);
 
 	//難易度調整バー
-	levelBar.draw();
+	m_levelBar.draw();
 	SetFontSize(35);
 	DrawFormatString(BAR_X + BAR_WIDTH + 95, BAR_Y - 20, COLOR_BlACK, "%d", Share::level);
 	SetFontSize(20);
 	DrawFormatString(BAR_X + BAR_WIDTH + 20, BAR_Y - 8, COLOR_BlACK, "LEVEL:");
 
 	//開始ボタン
-	startButton.draw();
+	m_startButton.draw();
 
 	//閉じるボタン
-	closeButton.draw();
+	m_closeButton.draw();
 
 	//音声
-	if (nowRadio) {
+	if (m_nowRadio) {
 		PlaySoundMem(m_radioSnd, DX_PLAYTYPE_NORMAL, true);
 	}
-	if (nowSlide) {
+	if (m_nowSlide) {
 		PlaySoundMem(m_sideSnd, DX_PLAYTYPE_NORMAL, true);
 	}
-	if (nowSwipe) {
+	if (m_nowSwipe) {
 		PlaySoundMem(m_swipeSnd, DX_PLAYTYPE_NORMAL, true);
 
 	}
@@ -198,7 +190,7 @@ void Menu::Finalize() {
 	//ロード画面の表示
 	DrawExtendGraph(0, 0, WIN_SIZE_X+5, WIN_SIZE_Y, Share::loadPic, true);
 	//ゲーム画面遷移ならSE
-	if (nowStart) {
+	if (m_nowStart) {
 		PlaySoundMem(m_startSnd, DX_PLAYTYPE_NORMAL, true);
 	}
 	//BGMを止める

@@ -95,8 +95,8 @@ void Game::Initialize() {
 	m_stopSnd = LoadSoundMem("sound/stop.mp3");
 
 	//ボタンの作成
-	undoButton = Button(m_undoPic , m_undoOnPic ,UNDO_X , UNDO_Y , UNDO_WIDTH , UNDO_HEIGHT , m_undoOffPic);
-	stopButton = Button(m_stopPic , m_stopOnPic ,STOP_X , STOP_Y , STOP_WIDTH , STOP_HEIGHT);
+	m_undoButton = Button(m_undoPic , m_undoOnPic ,UNDO_X , UNDO_Y , UNDO_WIDTH , UNDO_HEIGHT , m_undoOffPic);
+	m_stopButton = Button(m_stopPic , m_stopOnPic ,STOP_X , STOP_Y , STOP_WIDTH , STOP_HEIGHT);
 
 	//文字幅計算
 	SetFontSize(50);
@@ -179,9 +179,9 @@ void Game::Update() {
 
 	//Undoボタン
 	//状態が保存されて入なければ
-	if (undo_vec.size() == 0) undoButton.turnOff();
-	else undoButton.turnOn();
-	undoButton.update(&nowUndo);
+	if (undo_vec.size() == 0) m_undoButton.turnOff();
+	else m_undoButton.turnOn();
+	m_undoButton.update(&nowUndo);
 	if (nowUndo) {
 		m_state = undo_vec.back().first;
 		m_recentPut = undo_vec.back().second;
@@ -189,7 +189,7 @@ void Game::Update() {
 	}
 
 	//終了ボタン
-	stopButton.update(&nowStop);
+	m_stopButton.update(&nowStop);
 	if (nowStop) {
 		m_sceneChanger->ChangeScene(Scene_Menu);
 		nowToMenu = true;
@@ -293,10 +293,10 @@ void Game::Draw() {
 	}
 
 	//undoボタン
-	undoButton.draw();
+	m_undoButton.draw();
 
 	//stopボタン
-	stopButton.draw();
+	m_stopButton.draw();
 
 	//音声
 	if (nowPut) {

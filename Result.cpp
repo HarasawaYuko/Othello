@@ -59,10 +59,10 @@ void Result::Initialize() {
 
 	//画像のロード
 	m_resultPic = LoadGraph("pic/result.png");
-	nextPic = LoadGraph("pic/next.png");
-	nextOnPic = LoadGraph("pic/nextOn.png");
-	retryPic = LoadGraph("pic/retry.png");
-	retryOnPic = LoadGraph("pic/retryOn.png");
+	m_nextPic = LoadGraph("pic/next.png");
+	m_nextOnPic = LoadGraph("pic/nextOn.png");
+	m_retryPic = LoadGraph("pic/retry.png");
+	m_retryOnPic = LoadGraph("pic/retryOn.png");
 	
 	//音声のロード
 	m_nextSnd = LoadSoundMem("sound/next.mp3");
@@ -118,8 +118,8 @@ void Result::Initialize() {
 	RETRY_LETTER_X = (BUTTON_WIDTH / 2) - (GetDrawStringWidth("RETRY", 5) / 2);
 
 	//ボタンの作成
-	nextButton = Button(nextPic, nextOnPic, BUTTON_X, NEXT_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
-	retryButton = Button(retryPic, retryOnPic, BUTTON_X, RETRY_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
+	m_nextButton = Button(m_nextPic, m_nextOnPic, BUTTON_X, NEXT_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
+	m_retryButton = Button(m_retryPic, m_retryOnPic, BUTTON_X, RETRY_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
 }
 
 void Result::Update() {
@@ -127,14 +127,14 @@ void Result::Update() {
 	Mouse::instance()->update();
 
 	//次へボタン
-	nextButton.update(&nowNext);
-	if (nowNext) {
+	m_nextButton.update(&m_nowNext);
+	if (m_nowNext) {
 		m_sceneChanger->ChangeScene(Scene_Menu);
 	}
 
 	//もう一度ボタン
-	retryButton.update(&nowRetry);
-	if (nowRetry) {
+	m_retryButton.update(&m_nowRetry);
+	if (m_nowRetry) {
 		m_sceneChanger->ChangeScene(Scene_Game);
 	}
 }
@@ -165,20 +165,20 @@ void Result::Draw() {
 	SetFontSize(BUTTON_LETTER_SIZE);
 
 	//次へボタン
-	nextButton.draw();
+	m_nextButton.draw();
 
 	//もう一度ボタン
-	retryButton.draw();
+	m_retryButton.draw();
 }
 
 void Result::Finalize() {
 	//ロード画面の表示
 	DrawExtendGraph(0, 0, WIN_SIZE_X + 5, WIN_SIZE_Y, Share::loadPic, true);
 	//音声
-	if (nowNext) {
+	if (m_nowNext) {
 		PlaySoundMem(m_nextSnd, DX_PLAYTYPE_NORMAL, true);
 	}
-	else if (nowRetry) {
+	else if (m_nowRetry) {
 		PlaySoundMem(m_retrySnd , DX_PLAYTYPE_NORMAL, true);
 	}
 	//BGMを止める
@@ -188,10 +188,10 @@ void Result::Finalize() {
 }
 
 void Result::deleteMem() {
-	DeleteGraph(retryPic);
-	DeleteGraph(retryOnPic);
-	DeleteGraph(nextPic);
-	DeleteGraph(nextOnPic);
+	DeleteGraph(m_retryPic);
+	DeleteGraph(m_retryOnPic);
+	DeleteGraph(m_nextPic);
+	DeleteGraph(m_nextOnPic);
 	DeleteGraph(m_resultPic);
 
 	DeleteSoundMem(m_resultSnd);
