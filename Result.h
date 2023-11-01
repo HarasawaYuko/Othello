@@ -11,10 +11,10 @@ private:
 	//ゲーム進行用変数
 	//画像ハンドル
 	int m_resultPic;
-	int retryPic;
-	int retryOnPic;
-	int nextPic;
-	int nextOnPic;
+	int m_retryPic;
+	int m_retryOnPic;
+	int m_nextPic;
+	int m_nextOnPic;
 
 	//音声ハンドル
 	int m_resultSnd;
@@ -22,12 +22,12 @@ private:
 	int m_retrySnd;
 
 	//音声判定用
-	bool nowNext;
-	bool nowRetry;
+	bool m_nowNext;
+	bool m_nowRetry;
 
 	//ボタン
-	Button nextButton;
-	Button retryButton;
+	Button m_nextButton;
+	Button m_retryButton;
 
 public:
 	//関数

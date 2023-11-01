@@ -31,32 +31,19 @@ private:
 	int m_sideSnd;
 	int m_swipeSnd;
 
-	//•`‰æ”»’è—p
-	//bool onStartButton;
-	bool onRadioBlack;
-	bool onRadioWhite;
-	bool onSideBar;
-	bool onClose;
-	bool onSwipeRight;
-	bool onSwipeLeft;
-
 	//“ü—Í”»’è—p•Ï”
-	bool nowStart;
-	bool nowRadio;
-	bool nowSlide;
-	bool nowSwipe;
-	bool nowClose;
+	bool m_nowStart;
+	bool m_nowRadio;
+	bool m_nowSlide;
+	bool m_nowSwipe;
+	bool m_nowClose;
 
-	Button startButton;
-	Button closeButton;
-	Button swipeLeftButton;
-	Button swipeRightButton;
-	RadioButton turnButton;
-	SlideBar levelBar;
-
-	//•`‰æ—p
-	int m_bar_select_x;
-	int beforeLevel;
+	Button m_startButton;
+	Button m_closeButton;
+	Button m_swipeLeftButton;
+	Button m_swipeRightButton;
+	RadioButton m_turnButton;
+	SlideBar m_levelBar;
 
 	void deleteMem();
 
