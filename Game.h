@@ -40,8 +40,8 @@ private:
 	int m_playoutNum;
 
 	//ƒ{ƒ^ƒ“
-	Button undoButton;
-	Button stopButton;
+	Button m_undoButton;
+	Button m_stopButton;
 
 	void getCoord(int* , int* , const uint64_t)const;
 	void setSelectSquare(const int , const int);
