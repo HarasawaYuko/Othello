@@ -46,41 +46,35 @@ uint64_t State::getLegalBoard() const{
 	//右シフトのループ(ベクトルごと)
 	for (int i = 0; i < 4; i++) {
 		uint64_t my_copy = my_board;
-		uint64_t mayPut = ALL_F;//置ける可能性があるマス
-		int count = 1;
 		//自分の隣に敵の駒があるか
-		shift(&my_copy, true, i, count);
-		mayPut = my_copy & enemy_board;
+		shift(&my_copy, true, i);
+		my_copy = my_copy & enemy_board;
 		//返る可能性があるマスがあれば
-		while (mayPut != 0) {
+		while (my_copy != 0) {
 			//シフト(更に隣を調べる)
-			shift(&mayPut, true, i);
-			result = result | (mayPut & unput);
+			shift(&my_copy, true, i);
+			result = result | (my_copy & unput);
 			//置けるマスがあればその奥には置けない
-			mayPut = ~result & mayPut;
+			my_copy = ~result & my_copy;
 			//自分のマスがあればその奥には行けない
-			mayPut = ~my_board & mayPut;
-			count++;
+			my_copy = ~my_board & my_copy;
 		}
 	}
 	//左シフトのループ
 	for (int i = 0; i < 4; i++) {
-		uint64_t mayPut = ALL_F;//返る可能性があるマス
 		uint64_t my_copy = my_board;
-		int count = 1;
 		//自分の隣に敵の駒があるか
-		shift(&my_copy, false, i, count);
-		mayPut = my_copy & enemy_board;
+		shift(&my_copy, false, i);
+		my_copy = my_copy & enemy_board;
 		//返る可能性があるマスがあれば
-		while (mayPut != 0) {
+		while (my_copy != 0) {
 			//シフト
-			shift(&mayPut, false, i);
-			result = result | (mayPut & unput);
+			shift(&my_copy, false, i);
+			result = result | (my_copy & unput);
 			//置けるマスがあればその奥には置けない
-			mayPut = ~result & mayPut;
+			my_copy = ~result & my_copy;
 			//自分のマスがあればその奥には行けない
-			mayPut = ~my_board & mayPut;
-			count++;
+			my_copy = ~my_board & my_copy;
 		}
 	}
 	return result;
@@ -103,40 +97,35 @@ uint64_t State::getLegalBoard(piece color) const{
 	//右シフトのループ(ベクトルごと)
 	for (int i = 0; i < 4; i++) {
 		uint64_t my_copy = my;
-		uint64_t mayTurn = ALL_F;//返る可能性があるマス
-		int count = 1;
 		//自分の隣に敵の駒があるか
-		shift(&my_copy, true, i, count);
-		mayTurn = my_copy & enemy;
+		shift(&my_copy, true, i);
+		my_copy = my_copy & enemy;
 		//返る可能性があるマスがあれば
-		while (mayTurn != 0) {
+		while (my_copy != 0) {
 			//シフト
-			shift(&mayTurn, true, i);
-			result = result | (mayTurn & unput);
+			shift(&my_copy , true, i);
+			result = result | (my_copy & unput);
 			//置けるマスがあればその奥には置けない
-			mayTurn = ~result & mayTurn;
+			my_copy = ~result & my_copy;
 			//自分のマスがあればその奥には行けない
-			mayTurn = ~my & mayTurn;
-			count++;
+			my_copy = ~my & my_copy;
 		}
 	}
 	for (int i = 0; i < 4; i++) {
 		uint64_t mayTurn = ALL_F;//返る可能性があるマス
 		uint64_t my_copy = my;
-		int count = 1;
 		//自分の隣に敵の駒があるか
-		shift(&my_copy, false, i, count);
-		mayTurn = my_copy & enemy;
+		shift(&my_copy, false, i);
+		my_copy = my_copy & enemy;
 		//返る可能性があるマスがあれば
-		while (mayTurn != 0) {
+		while (my_copy != 0) {
 			//シフト
-			shift(&mayTurn, false, i);
-			result = result | (mayTurn & unput);
+			shift(&my_copy , false, i);
+			result = result | (my_copy & unput);
 			//置けるマスがあればその奥には置けない
-			mayTurn = ~result & mayTurn;
+			my_copy = ~result & my_copy;
 			//自分のマスがあればその奥には行けない
-			mayTurn = ~my & mayTurn;
-			count++;
+			my_copy = ~my & my_copy;
 		}
 	}
 	return result;
