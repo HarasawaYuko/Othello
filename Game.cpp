@@ -274,12 +274,12 @@ void Game::Draw() {
 	if (m_state.isDone()) {
 		SetFontSize(50);
 		if (m_state.getBlackPlayerStatus() == LOSE) {
-			DrawString((int)((WIN_CENT_X - SQUARE_SIZE * 4) / 2 - WIN_WIDTH), (int)(WIN_SIZE_Y / 2 + 150), "LOSE", COLOR_LBLUE);
-			DrawString((int)(WIN_SIZE_X * 0.75 + SQUARE_SIZE * 2 - LOSE_WIDTH / 2), (int)(WIN_SIZE_Y / 2 + 150), "WIN!", COLOR_RED);
+			DrawString((int)((WIN_CENT_X - SQUARE_SIZE * 4) / 2 - LOSE_WIDTH/2), (int)(WIN_SIZE_Y / 2 + 150), "LOSE", COLOR_LBLUE);
+			DrawString((int)(WIN_SIZE_X - WIN_CENT_X / 2 + SQUARE_SIZE * 2 - WIN_WIDTH / 2), (int)(WIN_SIZE_Y / 2 + 150), "WIN", COLOR_RED);
 		}
 		else if (m_state.getBlackPlayerStatus() == WIN) {
 			DrawString((int)((WIN_CENT_X - SQUARE_SIZE * 4) / 2 - WIN_WIDTH/2), (int)(WIN_SIZE_Y / 2 + 150), "WIN!", COLOR_RED);
-			DrawString((int)(WIN_SIZE_X * 0.75 + SQUARE_SIZE * 2 - LOSE_WIDTH / 2), (int)(WIN_SIZE_Y / 2 + 150), "LOSE", COLOR_LBLUE);
+			DrawString((int)(WIN_SIZE_X - WIN_CENT_X / 2 + SQUARE_SIZE * 2 - LOSE_WIDTH / 2), (int)(WIN_SIZE_Y / 2 + 150), "LOSE", COLOR_LBLUE);
 		}
 	}
 	else {

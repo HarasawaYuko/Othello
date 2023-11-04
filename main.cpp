@@ -5,18 +5,15 @@
 
 //定数
 //ウィンドウの初期位置
-#define WIN_POS_X 0
-#define WIN_POS_Y 0
+#define WIN_POS_X 50
+#define WIN_POS_Y 50
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     // ウィンドウモードに設定
     ChangeWindowMode(TRUE);
     // DXライブラリ初期化処理
-    if (DxLib_Init() < 0) {
-        //エラーなら終了する
-        return -1;
-    }
+
     //描画先を裏画面にする
     SetDrawScreen(DX_SCREEN_BACK);
     //画面等の設定
@@ -30,6 +27,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     //xボタンで終了しない
     SetWindowUserCloseEnableFlag(false);
     SetWaitVSyncFlag(0);
+
+    if (DxLib_Init() < 0) {
+        //エラーなら終了する
+        return -1;
+    }
 
     SceneMgr sceneMgr;//シーン管理クラス
 
