@@ -1,6 +1,6 @@
 #pragma once
 #include "include.h"
-#include "Mouse.h"
+
 //‹¤’Ê•Ï”‚ğŠÇ—‚·‚éstaticƒNƒ‰ƒX
 
 enum WinningStatus {

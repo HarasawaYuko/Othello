@@ -45,7 +45,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         sceneMgr.Draw();
         if (sceneMgr.fin) break;
     }
+    //終了処理
     sceneMgr.Finalize();
-    DxLib_End();    // DXライブラリ終了処理
+    DxLib_End();
     return 0;
 }

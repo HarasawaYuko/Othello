@@ -58,9 +58,7 @@ void Menu::Initialize() {
 
 	//âÊëúÇÃÉçÅ[Éh
 	m_titlePic = LoadGraph("pic/Title.png");
-	m_sideBarPic = LoadGraph("pic/SideBar.png");
 	m_closeButtonPic = LoadGraph("pic/fin.png");
-	m_closeFramePic = LoadGraph("pic/finFrame.png");
 	m_rightSwipePic = LoadGraph("pic/rightSwipe.png");
 	m_leftSwipePic = LoadGraph("pic/leftSwipe.png");
 	m_rightSwipeSelectPic = LoadGraph("pic/rightSwipeSelect.png");
@@ -206,13 +204,15 @@ void Menu::Finalize() {
 
 void Menu::deleteMem() {
 	DeleteGraph(m_titlePic);
-	DeleteGraph(m_sideBarPic);
 	DeleteGraph(m_closeButtonPic);
-	DeleteGraph(m_closeFramePic);
 	DeleteGraph(m_rightSwipePic);
 	DeleteGraph(m_rightSwipeSelectPic);
 	DeleteGraph(m_leftSwipePic);
 	DeleteGraph(m_leftSwipeSelectPic);
+	DeleteGraph(m_startPic);
+	DeleteGraph(m_startOnPic);
+	DeleteGraph(m_closePic);
+	DeleteGraph(m_closeOnPic);
 	DeleteSoundMem(m_menuSnd);
 	DeleteSoundMem(m_startSnd);
 	DeleteSoundMem(m_radioSnd);

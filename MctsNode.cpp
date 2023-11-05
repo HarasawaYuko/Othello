@@ -1,4 +1,5 @@
 #include "MctsNode.h"
+#include "AiRandom.h"
 
 static const int EXPAND_THRESHOLD = 10;//ノード展開の閾値
 static const double C = 1.0;//ノード選択用定数
