@@ -1,7 +1,8 @@
 #pragma once
 
 #include "BaseScene.h"
-#include "SceneMgr.h"
+
+//ƒV[ƒ“ŠÇ—
 
 class SceneMgr :public SceneChanger, Task {
 private:

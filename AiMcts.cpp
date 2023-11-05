@@ -1,4 +1,5 @@
 #include "AiMcts.h"
+#include "MctsNode.h"
 
 uint64_t mctsActionOthello(const State &state , const int playoutNum) {
 	//	‡–@è‚ªˆê‚Â‚¾‚¯‚Ì‚Í‘¦Œˆ

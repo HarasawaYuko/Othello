@@ -7,6 +7,8 @@
 #include "include.h"
 #include "UIMaterial.h"
 
+//ƒQ[ƒ€‰æ–Ê
+
 using AIFunction = std::function<uint64_t(const State &)>;
 
 class Game :public BaseScene {

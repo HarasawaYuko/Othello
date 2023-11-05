@@ -2,6 +2,8 @@
 #include "include.h"
 #include <functional>
 
+//UI作成のパーツ
+
 bool isIn(const int, const int, const int, const int);
 
 //色

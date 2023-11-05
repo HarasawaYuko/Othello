@@ -1,7 +1,8 @@
 #pragma once
 #include "include.h"
-#include "AiRandom.h"
 #include "State.h"
+
+//モンテカルロ木探索用ノードクラス
 
 class MctsNode {
 private:

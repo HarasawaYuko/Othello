@@ -11,9 +11,7 @@ class Menu :public BaseScene {
 private:
 	//‰æ‘œƒnƒ“ƒhƒ‹
 	int m_titlePic;
-	int m_sideBarPic;
 	int m_closeButtonPic;
-	int m_closeFramePic;
 	int m_rightSwipePic;
 	int m_leftSwipePic;
 	int m_rightSwipeSelectPic;

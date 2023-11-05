@@ -6,6 +6,8 @@
 
 #include "include.h"
 
+//リザルト画面
+
 class Result :public BaseScene {
 private:
 	//ゲーム進行用変数

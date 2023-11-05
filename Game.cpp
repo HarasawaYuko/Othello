@@ -5,7 +5,6 @@
 #include "AiMcts.h"
 #include "AiRandom.h"
 #include "AialphaBeta.h"
-#include "UIMaterial.h"
 
 /***íËêî***/
 static const int TOP_MARGIN = 50;//è„ë§É}Å[ÉWÉì
@@ -339,8 +338,10 @@ void Game::deleteMem() {
 	DeleteGraph(m_boxBlackPic);
 	DeleteGraph(m_boxWhitePic);
 	DeleteGraph(m_undoPic);
+	DeleteGraph(m_undoOnPic);
 	DeleteGraph(m_undoOffPic);
 	DeleteGraph(m_stopPic);
+	DeleteGraph(m_stopOnPic);
 	DeleteSoundMem(m_gameSnd);
 	DeleteSoundMem(m_pieceSnd);
 	DeleteSoundMem(m_passSnd);
