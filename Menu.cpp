@@ -111,14 +111,14 @@ void Menu::Update() {
 	m_swipeLeftButton.update(&m_nowSwipe);
 	if (m_nowSwipe) {
 		AI_INDEX--;
-		Share::level = (float)(m_levelBar.getRate() * AI_LEVEL_MAX[AI_INDEX]) + 1;
+		Share::level = (int)(m_levelBar.getRate() * AI_LEVEL_MAX[AI_INDEX]) + 1;
 		if (AI_INDEX < 0) AI_INDEX = AI_NUM - 1;
 	}
 	else{
 		m_swipeRightButton.update(&m_nowSwipe);
 		if (m_nowSwipe) {
 			AI_INDEX = (AI_INDEX + 1) % AI_NUM;
-			Share::level = (float)(m_levelBar.getRate() * AI_LEVEL_MAX[AI_INDEX]) + 1;
+			Share::level = (int)(m_levelBar.getRate() * AI_LEVEL_MAX[AI_INDEX]) + 1;
 		}
 	}
 
@@ -127,7 +127,7 @@ void Menu::Update() {
 	m_levelBar.update(&m_nowSlide);
 	if (m_nowSlide) {
 		int beforeLevel = Share::level;
-		Share::level = (float)(m_levelBar.getRate() * AI_LEVEL_MAX[AI_INDEX]) + 1;
+		Share::level = (int)(m_levelBar.getRate() * AI_LEVEL_MAX[AI_INDEX]) + 1;
 		if (beforeLevel == Share::level) {
 			m_nowSlide = false;
 		}

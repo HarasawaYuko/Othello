@@ -80,7 +80,7 @@ void RadioButton::draw() const{
 		DrawCircle(x + size + on * space, y + size , size, COLOR_LBLUE , false , 5);
 	}
 	//ëIëâ”èäï\é¶
-	DrawCircle(x + size + select * space, y + size, size * 0.6, COLOR_BLUE, true);
+	DrawCircle(x + size + select * space, y + size, (int)(size * 0.6), COLOR_BLUE, true);
 }
 
 int RadioButton::getSelect() const {
