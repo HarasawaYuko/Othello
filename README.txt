@@ -10,7 +10,7 @@ C++
 DXライブラリを使用
 
 <起動方法>
-picディレクトリ、soundディレクトリ、Othello.exeを同じディレクトリに配置してOthello.exeを実行
+picディレクトリ、soundディレクトリ、x64/Release/Othello.exeを同じディレクトリに配置してOthello.exeを実行
 
 <終了方法>
 Windows標準の終了ボタンではなく、タイトル画面右上のゲーム内終了ボタンを押す
